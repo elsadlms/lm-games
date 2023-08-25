@@ -118,6 +118,7 @@
 		&::before {
 			content: 'cache';
 			color: transparent;
+			position: absolute;
 		}
 	}
 </style>
