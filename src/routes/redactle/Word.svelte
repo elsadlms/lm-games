@@ -116,9 +116,9 @@
 		}
 
 		&::before {
-			content: 'cache';
+			// [WIP] trouver mieux
+			content: 'i';
 			color: transparent;
-			position: absolute;
 		}
 	}
 </style>
