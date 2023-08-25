@@ -7,7 +7,7 @@
 
 	import { articles } from '~/data/redactle/articles'
 
-	import { prepareArticle, getWordFrequencyInArticle } from './articleFunctions'
+	import { prepareArticle, getWordsOccurencesInArticle } from './articleFunctions'
 	import { getTextStyle } from './textStyles'
 
 	import Word from './Word.svelte'
@@ -32,7 +32,7 @@
 		return answerArray.includes(normalizeString(word))
 	}
 
-	$: guesses = [] as string[]
+	const guesses = [] as { word: string; occurrences: number }[]
 	$: revealedWords = [...smallWords] as string[]
 
 	$: isRevealed = (word: string) => {
@@ -68,17 +68,19 @@
 			// si on soumet un mot déjà révélé
 			if (revealedWords.includes(normalizedGuess)) {
 				const duplicateGuess = guesses.find((guess) => {
-					return getCloseWords(guess).includes(normalizedGuess)
+					return getCloseWords(guess.word).includes(normalizedGuess)
 				})
 				// ...on highlight à nouveau le mot
-				highlightGuess(duplicateGuess)
+				highlightGuess(duplicateGuess?.word)
 				inputText = ''
 				return
 			}
 
 			const wordsToReveal = getCloseWords(normalizedGuess)
+			const guessOccurrences = getWordsOccurencesInArticle(wordsToReveal, articleData)
 
-			guesses = [...guesses, cleanGuess]
+			// guesses = [...guesses, cleanGuess]
+			guesses.push({ word: cleanGuess, occurrences: guessOccurrences })
 			revealedWords = [...revealedWords, ...wordsToReveal]
 
 			if (articleIsSolved()) articleIsRevealed = true
@@ -159,15 +161,15 @@
 
 		<p>{guesses.length} essai{guesses.length > 1 ? 's' : ''}</p>
 		<ul class="history">
-			{#each guesses as guess}
-				{@const guessOccurrencies = getWordFrequencyInArticle(guess, articleData)}
+			{#each guesses as guess, i (i)}
 				{@const guessClasses = [
 					'guess',
-					isHighlighted(guess) ? 'guess-highlighted' : '',
-					guessOccurrencies === 0 ? 'guess-no-occurrence' : '',
+					isHighlighted(guess.word) ? 'guess-highlighted' : '',
+					guess.occurrences === 0 ? 'guess-no-occurrence' : '',
 				]}
-				<li class={guessClasses.join(' ')} on:click={() => highlightGuess(guess)}>
-					{guess} ({guessOccurrencies}),
+				<li class={guessClasses.join(' ')} on:click={() => highlightGuess(guess.word)}>
+					{i + 1}
+					{guess.word} ({guess.occurrences}),
 				</li>
 			{/each}
 		</ul>

@@ -79,7 +79,7 @@
 				bottom: 0;
 				left: 0;
 				z-index: -1;
-				animation: 600ms ease-out highlightBackground forwards;
+				animation: 200ms ease-out highlightBackground forwards;
 			}
 		}
 	}
@@ -97,8 +97,8 @@
 		position: relative;
 		top: 0.2em;
 		cursor: pointer;
-		transition: calc(var(--width) * 10ms) ease-in;
-		transform-origin: 0;
+		transition: calc(var(--width) * 5ms) ease-in;
+		transform-origin: 100%;
 
 		&.cache-inactive {
 			transform: scaleX(0);

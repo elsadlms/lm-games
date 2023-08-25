@@ -5,25 +5,41 @@ export const normalizeString = (string: string) => {
 	return normalizedString.trim().toLowerCase()
 }
 
-const specialCharaRegex = '[^A-Za-zÀ-ÖØ-öø-ÿsd]'
+const specialCharaRegexString = `[^A-Za-zÀ-ÖØ-öø-ÿœű\\s\\d]`
 
 export const findPunctuationInString = (string: string) => {
-	const regexExpression = `/(.+)?(${specialCharaRegex})(.+)?/`
-	const regex = new RegExp(regexExpression, 'g')
-	const stringPunctuationMatch = regex.exec(string)
+	const specialCharaRegex = new RegExp(specialCharaRegexString, 'g')
 
-	if (stringPunctuationMatch === null) return null
+	const capturingRegexString = `(.+)?(${specialCharaRegexString})(.+)?`
+	const capturingRegex = new RegExp(capturingRegexString, '')
 
-	return {
-		start: stringPunctuationMatch[1],
-		punctuation: stringPunctuationMatch[2],
-		end: stringPunctuationMatch[3],
+	const result = []
+	let remainingString = string
+
+	while (remainingString !== null) {
+		const matchesArray = [...remainingString.matchAll(specialCharaRegex)]
+		if (matchesArray.length === 0) break
+
+		const capturedGroup = capturingRegex.exec(remainingString)
+		if (capturedGroup === null) break
+
+		const [_, start, punctuation, end] = capturedGroup
+
+		result.unshift({
+			start: matchesArray.length === 1 ? start : '',
+			punctuation,
+			end,
+		})
+
+		remainingString = start ?? null
 	}
+
+	return result
 }
 
 export const removeSpecialCharactersFromString = (string: string) => {
-	const regex = new RegExp(specialCharaRegex, 'g')
-	let cleanString = string.replaceAll(regex, '')
+	const specialCharaRegex = new RegExp(specialCharaRegexString, 'g')
+	let cleanString = string.replaceAll(specialCharaRegex, '')
 	return cleanString
 }
 
