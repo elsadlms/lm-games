@@ -2,11 +2,12 @@ export interface Article {
 	id: number
 	url: string
 	publicationYear: number
+	publicationDate: string
 	nodes: ArticleRawNode[]
 	personality?: string
 }
 
-export type ArticleNodeType = 'title' | 'heading' | 'paragraph' | 'subtitle'
+export type ArticleNodeType = 'title' | 'heading' | 'paragraph' | 'subtitle' | 'publication'
 
 // [WIP] clean definition ArticleNode
 
@@ -30,4 +31,5 @@ export interface ArticleNodeStyle {
 export interface ArticleElement {
 	type: 'word' | 'punctuation'
 	content: string
+	spaceAfter: boolean | undefined
 }

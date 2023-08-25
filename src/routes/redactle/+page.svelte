@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Article } from '~/types'
+	import type { Article, ArticleNode } from '~/types'
 
 	import { getRandomElementFromArray } from '~/utils/index'
 	import { normalizeString } from '~/utils/textFunctions'
-	import { smallWords, getWordGroup } from '~/utils/dictionary'
+	import { smallWords, getCloseWords } from '~/utils/dictionary'
 
 	import { articles } from '~/data/redactle/articles'
 
@@ -13,7 +13,24 @@
 	import Word from './Word.svelte'
 
 	const article: Article = getRandomElementFromArray(articles as [])
-	const articleData = prepareArticle(article)
+	const articleData: ArticleNode[] = prepareArticle(article)
+
+	const answerArray: string[] = article.personality
+		? article.personality.split(' ').map((word) => normalizeString(word))
+		: []
+
+	// [DEV]
+	$: displayRevealedWords = false
+
+	// [WIP] à clean
+	$: articleIsSolved = () => {
+		return answerArray.every((word) => revealedWords.includes(word))
+	}
+	$: articleIsRevealed = false
+
+	$: isInAnswer = (word: string) => {
+		return answerArray.includes(normalizeString(word))
+	}
 
 	$: guesses = [] as string[]
 	$: revealedWords = [...smallWords] as string[]
@@ -24,7 +41,7 @@
 	}
 
 	$: highlightedGuess = '' as string
-	$: highlightedWords = getWordGroup(highlightedGuess)
+	$: highlightedWords = getCloseWords(highlightedGuess)
 
 	$: highlightGuess = (word?: string) => {
 		if (word === undefined) return
@@ -46,11 +63,12 @@
 			if (inputText.trim() === '') return
 
 			const cleanGuess = inputText.trim().toLowerCase()
+			const normalizedGuess = normalizeString(cleanGuess)
 
 			// si on soumet un mot déjà révélé
-			if (revealedWords.includes(normalizeString(cleanGuess))) {
+			if (revealedWords.includes(normalizedGuess)) {
 				const duplicateGuess = guesses.find((guess) => {
-					return getWordGroup(guess).includes(normalizeString(cleanGuess))
+					return getCloseWords(guess).includes(normalizedGuess)
 				})
 				// ...on highlight à nouveau le mot
 				highlightGuess(duplicateGuess)
@@ -58,10 +76,12 @@
 				return
 			}
 
-			const wordsToReveal = getWordGroup(cleanGuess)
+			const wordsToReveal = getCloseWords(normalizedGuess)
 
 			guesses = [...guesses, cleanGuess]
 			revealedWords = [...revealedWords, ...wordsToReveal]
+
+			if (articleIsSolved()) articleIsRevealed = true
 
 			highlightGuess(cleanGuess)
 			inputText = ''
@@ -72,9 +92,29 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div>
+	<!-- [DEV] REVEALED WORDS -->
+	<div style="border-bottom: 1px solid #ddd;">
+		<p>Solved?? {articleIsSolved()}</p>
+		<p
+			on:click={() => {
+				displayRevealedWords = !displayRevealedWords
+			}}
+			style="text-decoration: underline; cursor: pointer;"
+		>
+			Mots révélés
+		</p>
+		{#if displayRevealedWords}
+			<p>
+				{#each revealedWords as word}
+					<span>{word}, </span>
+				{/each}
+			</p>
+		{/if}
+	</div>
+
 	<!-- ARTICLE -->
 	<div class="article">
-		{#each articleData as block}
+		{#each articleData as block, j}
 			{@const { fontFamily, fontSize, fontWeight } = getTextStyle(block.type)}
 
 			{@const blockClasses = ['block', `block-${block.type}`]}
@@ -85,18 +125,24 @@
 			]}
 
 			<p class={blockClasses.join(' ')} style={blockVariables.join(' ')}>
-				{#each block.content as element}
+				<!-- [WIP] meilleure solution pour les {' '} -->
+				{#each block.content as element, i}
 					{#if element.type === 'word'}
+						<!-- [WIP] exception pour le premier "publié" -->
+						{@const isHidden =
+							j === 0 && i === 0 && element.content === 'Publié'
+								? false
+								: !isRevealed(element.content)}
 						<Word
 							word={element.content}
-							hidden={!isRevealed(element.content)}
+							hidden={articleIsRevealed ? false : isHidden}
 							highlighted={isHighlighted(element.content)}
 							textStyle="{fontWeight} {fontSize}px {fontFamily}"
-						/>
+						/>{#if element.spaceAfter === true}{' '}{/if}
 					{:else if element.type === 'punctuation'}
-						<span class="punctuation">{element.content}</span>
+						<span class="punctuation">{element.content}</span
+						>{#if element.spaceAfter === true}{' '}{/if}
 					{/if}
-					{' '}
 				{/each}
 			</p>
 		{/each}
@@ -107,10 +153,11 @@
 		<p
 			class="input"
 			contenteditable="true"
-			bind:innerHTML={inputText}
+			bind:innerText={inputText}
 			on:keypress={handleKeyPress}
 		/>
 
+		<p>{guesses.length} essai{guesses.length > 1 ? 's' : ''}</p>
 		<ul class="history">
 			{#each guesses as guess}
 				{@const guessOccurrencies = getWordFrequencyInArticle(guess, articleData)}
@@ -169,7 +216,8 @@
 			background-color: yellow;
 
 			&.guess-no-occurrence {
-				background-color: grey;
+				background-color: transparent;
+				color: grey;
 			}
 		}
 	}

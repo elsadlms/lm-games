@@ -30,7 +30,12 @@
 	})
 
 	$: wordClasses = ['word', highlighted ? 'word-highlighted' : '']
-	$: cacheClasses = ['cache', displayLettersCount ? 'cache-letter-count' : '']
+	$: cacheClasses = [
+		'cache',
+		!hidden ? 'cache-inactive' : '',
+		displayLettersCount ? 'cache-letter-count' : '',
+	]
+	$: cacheVariables = [`--width: ${width};`]
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -40,13 +45,12 @@
 		<span class={wordClasses.join(' ')}>
 			{word}
 		</span>
-	{:else}
-		<span
-			class={cacheClasses.join(' ')}
-			data-word-length={word.length}
-			style="--width: {width}px;"
-		/>
 	{/if}
+	<span
+		class={cacheClasses.join(' ')}
+		data-word-length={word.length}
+		style={cacheVariables.join(' ')}
+	/>
 </div>
 
 <style lang="scss">
@@ -59,25 +63,46 @@
 		grid-area: 1 / -1;
 	}
 
-	// [WIP] hidden low-cost !!
-	.word.word-hidden {
-		background-color: pink;
-		color: plum;
-		color: pink;
+	.word {
+		background-color: transparent;
+		transition: 2000ms;
 		position: relative;
+
+		&.word-highlighted {
+			&::before {
+				content: '';
+				display: inline-block;
+				position: absolute;
+				height: 1.1em;
+				top: 0.2em;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: -1;
+				animation: 600ms ease-out highlightBackground forwards;
+			}
+		}
 	}
 
-	.word.word-highlighted {
-		background-color: yellow;
+	@keyframes highlightBackground {
+		100% {
+			background-color: yellow;
+		}
 	}
 
 	.cache {
-		height: 1em;
-		width: var(--width);
+		height: 1.1em;
+		width: calc(var(--width) * 1px);
 		background-color: var(--c-primary);
 		position: relative;
 		top: 0.2em;
 		cursor: pointer;
+		transition: calc(var(--width) * 10ms) ease-in;
+		transform-origin: 0;
+
+		&.cache-inactive {
+			transform: scaleX(0);
+		}
 
 		&.cache-letter-count::after {
 			content: attr(data-word-length);
@@ -88,6 +113,11 @@
 			right: 0;
 			line-height: 100%;
 			padding: 0.1em;
+		}
+
+		&::before {
+			content: 'cache';
+			color: transparent;
 		}
 	}
 </style>

@@ -1,32 +1,46 @@
 import type { Article, ArticleNode, ArticleElement } from '~/types'
 
-import { getWordGroup } from '~/utils/dictionary'
+import { getCloseWords } from '~/utils/dictionary'
+import { punctuationSpaceRules } from '~/utils/punctuation'
 import { findPunctuationInString, normalizeString } from '~/utils/textFunctions'
 
 export const prepareArticle = (article: Article) => {
 	return article.nodes.map((node) => {
 		const blockData = node.content.split(' ').flatMap((element) => {
-			if (findPunctuationInString(element) !== null) {
+			const stringWithPunctuation = findPunctuationInString(element)
+
+			if (stringWithPunctuation !== null) {
 				const punctuationArray = []
 
-				if (findPunctuationInString(element)?.start) {
+				const punctuationSpaceRule = punctuationSpaceRules.find(
+					(punctuation) => punctuation.value === stringWithPunctuation.punctuation,
+				)
+
+				// if (punctuationSpaceRule === undefined) console.log(stringWithPunctuation.punctuation)
+
+				if (stringWithPunctuation.start) {
 					punctuationArray.push({
 						type: 'word',
-						content: findPunctuationInString(element)?.start as string,
+						content: stringWithPunctuation.start as string,
+						spaceAfter: punctuationSpaceRule?.spaceBefore,
 					} as ArticleElement)
 				}
 
 				punctuationArray.push({
 					type: 'punctuation',
-					content: findPunctuationInString(element)?.punctuation as string,
+					content: stringWithPunctuation.punctuation as string,
+					spaceAfter: punctuationSpaceRule?.spaceAfter,
 				} as ArticleElement)
 
-				if (findPunctuationInString(element)?.end) {
+				if (stringWithPunctuation.end) {
 					punctuationArray.push({
 						type: 'word',
-						content: findPunctuationInString(element)?.end as string,
+						content: stringWithPunctuation.end as string,
+						spaceAfter: true,
 					} as ArticleElement)
 				}
+
+				if (stringWithPunctuation.punctuation === '"') console.log(punctuationArray)
 
 				return punctuationArray
 			}
@@ -34,6 +48,7 @@ export const prepareArticle = (article: Article) => {
 			return {
 				type: 'word',
 				content: element,
+				spaceAfter: true,
 			} as ArticleElement
 		})
 
@@ -45,11 +60,12 @@ export const prepareArticle = (article: Article) => {
 }
 
 export const getWordFrequencyInArticle = (word: string, article: ArticleNode[]) => {
-	const wordGroup = getWordGroup(word)
+	const normalizedWord = normalizeString(word)
+	const closeWords = getCloseWords(normalizedWord)
 	const articleElements = article.map((node) => node.content).flat()
 
 	const wordOccurences = articleElements.filter((element) => {
-		return wordGroup.includes(normalizeString(element.content))
+		return closeWords.includes(normalizeString(element.content))
 	})
 
 	return wordOccurences.length

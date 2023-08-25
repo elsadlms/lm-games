@@ -1,11 +1,16 @@
 export const normalizeString = (string: string) => {
-	const normalizedString = removeAccentsFromString(string.toString()).trim().toLowerCase()
-	return normalizedString
+	let normalizedString = string.toString()
+	normalizedString = removeAccentsFromString(normalizedString)
+	normalizedString = removeSpecialCharactersFromString(normalizedString)
+	return normalizedString.trim().toLowerCase()
 }
 
+const specialCharaRegex = '[^A-Za-zÀ-ÖØ-öø-ÿsd]'
+
 export const findPunctuationInString = (string: string) => {
-	const punctuationRegex = /(.+)?([^A-Za-zÀ-ÖØ-öø-ÿ\s\d])(.+)?/g
-	const stringPunctuationMatch = punctuationRegex.exec(string)
+	const regexExpression = `/(.+)?(${specialCharaRegex})(.+)?/`
+	const regex = new RegExp(regexExpression, 'g')
+	const stringPunctuationMatch = regex.exec(string)
 
 	if (stringPunctuationMatch === null) return null
 
@@ -14,6 +19,12 @@ export const findPunctuationInString = (string: string) => {
 		punctuation: stringPunctuationMatch[2],
 		end: stringPunctuationMatch[3],
 	}
+}
+
+export const removeSpecialCharactersFromString = (string: string) => {
+	const regex = new RegExp(specialCharaRegex, 'g')
+	let cleanString = string.replaceAll(regex, '')
+	return cleanString
 }
 
 import { accents } from './accents'

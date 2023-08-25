@@ -2,6 +2,12 @@ import type { ArticleNodeStyle } from '~/types'
 
 const textStyles: ArticleNodeStyle[] = [
 	{
+		type: 'publication',
+		fontFamily: 'The Antiqua B',
+		fontSize: 14,
+		fontWeight: 500,
+	},
+	{
 		type: 'title',
 		fontFamily: 'The Antiqua B',
 		fontSize: 24,
