@@ -1,5 +1,14 @@
 :root {
-	--ff-the-antiqua-b: 'The Antiqua B';
+  --c-primary: var(--lmui-c-charcoal-medium);
+  --c-text: var(--lmui-c-charcoal-dark);
+  --c-body-background: var(--lmui-c-snow-lighter);
 
-	--c-primary: #2a303c;
+  --c-bg-guess: var(--lmui-c-slate-medium);
+  --c-text-guess: var(--lmui-c-snow-light);
+  --c-bg-guess-highlighted: #e726dc;
+  --c-bg-guess-highlighted-light: #ff25f3;
+  --c-text-guess-highlighted: var(--lmui-c-snow-light);
+  --c-bg-guess-highlighted-no-occurrence: var(--lmui-c-slate-medium);
+  --c-text-guess-highlighted-no-occurrence: var(--lmui-c-smoke-dark);
+
 }

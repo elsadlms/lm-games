@@ -1,7 +1,26 @@
-<script>
+<script lang="ts">
+	import { page } from '$app/stores'
+
+	const routes = [
+		{
+			id: 'redactle',
+			label: 'Redactle',
+		},
+		{
+			id: 'date-article',
+			label: "Dater l'article",
+		},
+	]
+
+	$: activeRoute = $page.route.id?.slice(1)
+	$: isActive = (id: string) => {
+		if (id === activeRoute) return true
+		else return false
+	}
 </script>
 
 <svelte:head>
+	<link rel="stylesheet" href="./styles/reset.css" />
 	<link rel="stylesheet" href="./styles/fonts.css" />
 	<link rel="stylesheet" href="./styles/variables.css" />
 </svelte:head>
@@ -9,31 +28,81 @@
 <div>
 	<nav>
 		<ul>
-			{#each ['redactle', 'date-article'] as page}
+			{#each routes as route}
+				{@const buttonClasses = [
+					'button',
+					'lmui-button',
+					'lmui-button_secondary',
+					'lmui-button_m',
+					isActive(route.id) ? 'button_active' : '',
+				]}
 				<li>
-					<a href={'/' + page}>{page}</a>
+					<a class={buttonClasses.join(' ')} href={'/' + route.id}>{route.label}</a>
 				</li>
 			{/each}
 		</ul>
 	</nav>
-	<slot />
+
+	<div class="container">
+		<slot />
+	</div>
 </div>
 
 <style lang="scss">
-	:root {
-		font-family: sans-serif;
+	:global(body) {
+		background-color: var(--c-body-background);
+	}
+
+	:global(.lm-app) {
+		--main-column-width: 90%;
+		font-family: var(--ff-marr-sans);
+		color: var(--c-text);
+	}
+
+	nav {
+		background-color: var(--c-body-background);
+		top: 0;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		z-index: 2;
 	}
 
 	ul {
-		margin: 0;
-		padding: 0;
+		flex-grow: 1;
+		max-width: var(--main-column-width);
+		padding: 24px 0;
 		list-style: none;
 		display: flex;
-		padding-bottom: 1em;
 		border-bottom: 1px solid #ddd;
 
 		li + li {
 			padding-left: 1em;
+		}
+	}
+
+	.button {
+		text-decoration: none;
+
+		&_active {
+			color: var(--lmui-c-main-tab-label-enabled);
+			background: var(--lmui-c-main-tab-bg-enabled);
+			border: 1px solid var(--lmui-c-main-tab-bg-enabled);
+			transition: 0.12s ease-in;
+		}
+	}
+
+	.container {
+		background-color: var(--lmui-c-white);
+		box-shadow: 0px 15px 60px 2px rgba(1, 54, 79, 0.07);
+		border-radius: 10px;
+		padding: 40px 60px;
+		max-width: var(--main-column-width);
+		margin: 48px auto;
+		z-index: 1;
+
+		@media (max-width: 800px) {
+			padding: 20px 24px;
 		}
 	}
 </style>

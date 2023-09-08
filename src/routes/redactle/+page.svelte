@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Article, ArticleNode } from '~/types'
+	import { clueMode } from './store'
 
 	import { getRandomElementFromArray } from '~/utils/index'
 	import { normalizeString } from '~/utils/textFunctions'
@@ -22,17 +23,33 @@
 	// [DEV]
 	$: displayRevealedWords = false
 
+	const toggleClueMode = () => {
+		clueMode.update((value) => {
+			if (value === false) return true
+			else return false
+		})
+	}
+
 	// [WIP] à clean
 	$: articleIsSolved = () => {
 		return answerArray.every((word) => revealedWords.includes(word))
 	}
 	$: articleIsRevealed = false
 
+	$: finishGame = () => {
+		articleIsRevealed = true
+	}
+
 	$: isInAnswer = (word: string) => {
 		return answerArray.includes(normalizeString(word))
 	}
 
-	const guesses = [] as { word: string; occurrences: number }[]
+	// $: guesses = [] as { word: string; occurrences: number }[]
+	$: guesses = [
+		{ word: 'mot', occurrences: 0 },
+		{ word: 'test', occurrences: 0 },
+		{ word: 'roi', occurrences: 2 },
+	] as { word: string; occurrences: number }[]
 	$: revealedWords = [...smallWords] as string[]
 
 	$: isRevealed = (word: string) => {
@@ -55,6 +72,30 @@
 
 	let inputText = ''
 
+	const revealWord = (word: string) => {
+		const normalizedWord = normalizeString(word)
+
+		// si on soumet un mot déjà révélé
+		if (revealedWords.includes(normalizedWord)) {
+			const duplicateGuess = guesses.find((guess) => {
+				return getCloseWords(guess.word).includes(normalizedWord)
+			})
+			// ...on highlight à nouveau le mot
+			highlightGuess(duplicateGuess?.word)
+			return
+		}
+
+		const wordsToReveal = getCloseWords(normalizedWord)
+		const guessOccurrences = getWordsOccurencesInArticle(wordsToReveal, articleData)
+
+		// guesses.push()
+		guesses = [{ word, occurrences: guessOccurrences }, ...guesses]
+		revealedWords = [...revealedWords, ...wordsToReveal]
+
+		if (articleIsSolved()) articleIsRevealed = true
+		highlightGuess(word)
+	}
+
 	const handleKeyPress = (e: KeyboardEvent) => {
 		if (e.code === 'Enter') {
 			e.preventDefault()
@@ -63,29 +104,8 @@
 			if (inputText.trim() === '') return
 
 			const cleanGuess = inputText.trim().toLowerCase()
-			const normalizedGuess = normalizeString(cleanGuess)
+			revealWord(cleanGuess)
 
-			// si on soumet un mot déjà révélé
-			if (revealedWords.includes(normalizedGuess)) {
-				const duplicateGuess = guesses.find((guess) => {
-					return getCloseWords(guess.word).includes(normalizedGuess)
-				})
-				// ...on highlight à nouveau le mot
-				highlightGuess(duplicateGuess?.word)
-				inputText = ''
-				return
-			}
-
-			const wordsToReveal = getCloseWords(normalizedGuess)
-			const guessOccurrences = getWordsOccurencesInArticle(wordsToReveal, articleData)
-
-			// guesses = [...guesses, cleanGuess]
-			guesses.push({ word: cleanGuess, occurrences: guessOccurrences })
-			revealedWords = [...revealedWords, ...wordsToReveal]
-
-			if (articleIsSolved()) articleIsRevealed = true
-
-			highlightGuess(cleanGuess)
 			inputText = ''
 		}
 	}
@@ -95,7 +115,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div>
 	<!-- [DEV] REVEALED WORDS -->
-	<div style="border-bottom: 1px solid #ddd;">
+	<!-- <div style="border-bottom: 1px solid #ddd;">
 		<p>Solved?? {articleIsSolved()}</p>
 		<p
 			on:click={() => {
@@ -112,14 +132,18 @@
 				{/each}
 			</p>
 		{/if}
-	</div>
+	</div> -->
+	<!-- <div>
+		<p on:click={toggleClueMode}>toggle clueMode</p>
+		<p>clueMode? {$clueMode}</p>
+	</div> -->
 
 	<!-- ARTICLE -->
 	<div class="article">
 		{#each articleData as block, j}
 			{@const { fontFamily, fontSize, fontWeight } = getTextStyle(block.type)}
 
-			{@const blockClasses = ['block', `block-${block.type}`]}
+			{@const blockClasses = ['block', `block_${block.type}`]}
 			{@const blockVariables = [
 				`--font-family: ${fontFamily};`,
 				`--font-size: ${fontSize}px;`,
@@ -132,7 +156,7 @@
 					{#if element.type === 'word'}
 						<!-- [WIP] exception pour le premier "publié" -->
 						{@const isHidden =
-							j === 0 && i === 0 && element.content === 'Publié'
+							j === 0 && i === 0 && normalizeString(element.content) === 'publié'
 								? false
 								: !isRevealed(element.content)}
 						<Word
@@ -159,20 +183,29 @@
 			on:keypress={handleKeyPress}
 		/>
 
-		<p>{guesses.length} essai{guesses.length > 1 ? 's' : ''}</p>
 		<ul class="history">
 			{#each guesses as guess, i (i)}
 				{@const guessClasses = [
 					'guess',
-					isHighlighted(guess.word) ? 'guess-highlighted' : '',
-					guess.occurrences === 0 ? 'guess-no-occurrence' : '',
+					isHighlighted(guess.word) ? 'guess_highlighted' : '',
+					guess.occurrences === 0 ? 'guess_no-occurrence' : '',
 				]}
 				<li class={guessClasses.join(' ')} on:click={() => highlightGuess(guess.word)}>
-					{i + 1}
-					{guess.word} ({guess.occurrences}),
+					<!-- {i + 1} -->
+					<span class="guess__word">{guess.word}</span>{' '}
+					<span class="guess__occurrences">{guess.occurrences}</span>
 				</li>
 			{/each}
 		</ul>
+
+		<div class="bar">
+			<div class="bar__stats">
+				<p>{guesses.length} essai{guesses.length > 1 ? 's' : ''}</p>
+			</div>
+			<div class="bar__quit">
+				<p on:click={finishGame}>Abandonner</p>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -185,6 +218,10 @@
 		font-size: 18px;
 		padding-bottom: 20vh;
 
+		p + p {
+			margin-top: 1em;
+		}
+
 		.block {
 			line-height: 140%;
 			font-family: var(--font-family), var(--ff-the-antiqua-b);
@@ -196,31 +233,101 @@
 	.guesses {
 		position: fixed;
 		bottom: 0;
+		left: 0;
 		height: 20vh;
 		width: 100%;
-		background-color: white;
+		background-color: var(--lmui-c-slate-darker);
+		box-shadow: 0px -6px 24px 0px rgba(0, 0, 0, 0.25);
+		color: var(--lmui-c-smoke-light);
+		border-radius: 12px 12px 0 0;
+		padding: 24px;
 		display: flex;
 		flex-direction: column;
 
 		.input {
-			background-color: #ddd;
-			border-bottom: 1px solid black;
+			--input-height: 42px;
+			box-sizing: border-box;
+			height: var(--input-height);
+			line-height: var(--input-height);
+			width: 100%;
+			padding: 0 0 0 16px;
+			border-radius: var(--lmui-c-rounded-search-radius);
+			border: 1px solid var(--lmui-c-main-search-border);
+			font-family: var(--ff-marr-sans);
+			font-size: 16px;
+			font-weight: 400;
+			letter-spacing: -0.015em;
+			color: var(--lmui-c-main-search-type);
+			color: #fff;
+
+			background: transparent;
+			box-shadow: inset 0px 1px 1px 1px rgba(0, 0, 0, 0.09), 0px 4px 6px 2px rgba(0, 0, 0, 0);
+			transition: 0.3s ease-in;
 		}
 
 		.history {
 			display: flex;
+			gap: 8px;
 			flex-wrap: wrap;
 			list-style: none;
-			overflow-y: scroll;
+			// overflow-y: scroll;
+			padding: 16px 0;
 		}
 
-		.guess.guess-highlighted {
-			background-color: yellow;
+		.guess {
+			padding: 4px 8px;
+			border-radius: 1em;
+			font-weight: 200;
+			background-color: var(--c-bg-guess);
+			color: var(--c-text-guess);
+			transition: color 400ms, background-color 400ms;
 
-			&.guess-no-occurrence {
-				background-color: transparent;
-				color: grey;
+			&.guess_highlighted {
+				background-color: var(--c-bg-guess-highlighted);
+				color: var(--c-text-guess-highlighted);
+
+				&.guess_no-occurrence {
+					background-color: var(--c-bg-guess-highlighted-no-occurrence);
+					color: var(--c-text-guess-highlighted-no-occurrence);
+				}
+			}
+
+			&__word {
+				font-weight: 500;
 			}
 		}
+
+		.bar {
+			margin-top: auto;
+			display: flex;
+			justify-content: space-between;
+			font-weight: 500;
+
+			&__stats {
+				font-family: var(--ff-marr-sans-condensed);
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+			}
+
+			&__quit {
+				text-decoration: underline;
+				text-decoration-thickness: 0.1em;
+				text-underline-offset: 0.3em;
+				cursor: pointer;
+				transition: color 200ms;
+
+				&:hover {
+					color: var(--lmui-c-snow-darker);
+				}
+			}
+		}
+	}
+
+	:global(.block.block_publication .cache) {
+		top: 0;
+	}
+
+	:global(.block.block_publication .word) {
+		opacity: 0.8;
 	}
 </style>

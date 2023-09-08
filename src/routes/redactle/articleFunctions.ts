@@ -5,7 +5,12 @@ import { findPunctuationInString, normalizeString } from '~/utils/textFunctions'
 
 export const prepareArticle = (article: Article) => {
 	return article.nodes.map((node) => {
-		const blockData = node.content.split(' ').flatMap((element) => {
+
+    const nodeData = node
+    if (node.type === 'publication') nodeData.content = node.content.toUpperCase()
+
+		const blockData = nodeData.content.split(' ').flatMap((element) => {
+
 			const stringWithPunctuation = findPunctuationInString(element)
 
 			if (stringWithPunctuation !== undefined && stringWithPunctuation?.length !== 0) {

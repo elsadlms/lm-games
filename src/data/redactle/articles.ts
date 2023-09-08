@@ -44,7 +44,7 @@ export const articles: Article[] = [
 			},
 			{
 				type: 'subtitle',
-				content: 'UNE VOIX RECONNAISSABLE ENTRE TOUTES',
+				content: 'Une voix reconnaissable entre toutes',
 			},
 			{
 				type: 'paragraph',
@@ -58,7 +58,7 @@ export const articles: Article[] = [
 			},
 			{
 				type: 'subtitle',
-				content: '"THRILLER", ALBUM LE PLUS VENDU DE TOUS LES TEMPS',
+				content: '"Thriller", album le plus vendu de tous les temps',
 			},
 			{
 				type: 'paragraph',

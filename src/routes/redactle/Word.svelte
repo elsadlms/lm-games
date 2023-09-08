@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import { clueMode } from './store'
 
 	export let word: string
 	export let hidden: boolean
@@ -9,6 +10,11 @@
 
 	$: width = 0
 	$: displayLettersCount = false
+
+	const handleClick = () => {
+		if ($clueMode) console.log('clue!')
+		else toggleLettersCount()
+	}
 
 	const toggleLettersCount = () => {
 		displayLettersCount = !displayLettersCount
@@ -29,18 +35,18 @@
 		width = getWordWidth(word, textStyle) ?? 0
 	})
 
-	$: wordClasses = ['word', highlighted ? 'word-highlighted' : '']
+	$: wordClasses = ['word', highlighted ? 'word_highlighted' : '']
 	$: cacheClasses = [
 		'cache',
-		!hidden ? 'cache-inactive' : '',
-		displayLettersCount ? 'cache-letter-count' : '',
+		!hidden ? 'cache_inactive' : '',
+		displayLettersCount ? 'cache__letter-count' : '',
 	]
 	$: cacheVariables = [`--width: ${width};`]
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="container" on:click={toggleLettersCount}>
+<div class="container" on:click={handleClick}>
 	{#if hidden === false}
 		<span class={wordClasses.join(' ')}>
 			{word}
@@ -67,12 +73,14 @@
 		background-color: transparent;
 		transition: 2000ms;
 		position: relative;
+		z-index: 0;
 
-		&.word-highlighted {
+		&.word_highlighted {
 			&::before {
 				content: '';
 				display: inline-block;
 				position: absolute;
+				border-radius: 2px;
 				height: 1.1em;
 				top: 0.2em;
 				right: 0;
@@ -86,7 +94,7 @@
 
 	@keyframes highlightBackground {
 		100% {
-			background-color: yellow;
+			background-color: var(--c-bg-guess-highlighted-light);
 		}
 	}
 
@@ -100,11 +108,11 @@
 		transition: calc(var(--width) * 5ms) ease-in;
 		transform-origin: 100%;
 
-		&.cache-inactive {
+		&.cache_inactive {
 			transform: scaleX(0);
 		}
 
-		&.cache-letter-count::after {
+		&.cache__letter-count::after {
 			content: attr(data-word-length);
 			color: #bbb;
 			font-family: monospace;
