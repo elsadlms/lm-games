@@ -44,12 +44,7 @@
 		return answerArray.includes(normalizeString(word))
 	}
 
-	// $: guesses = [] as { word: string; occurrences: number }[]
-	$: guesses = [
-		{ word: 'mot', occurrences: 0 },
-		{ word: 'test', occurrences: 0 },
-		{ word: 'roi', occurrences: 2 },
-	] as { word: string; occurrences: number }[]
+	$: guesses = [] as { word: string; occurrences: number }[]
 	$: revealedWords = [...smallWords] as string[]
 
 	$: isRevealed = (word: string) => {
