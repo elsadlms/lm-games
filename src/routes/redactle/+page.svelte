@@ -287,7 +287,10 @@
 	.guesses {
 		position: fixed;
 		bottom: 0;
-		left: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: calc(var(--main-column-width) + 64px);
+		max-width: calc(var(--main-column-max-width) + 64px);
 		height: auto;
 		max-height: 80vh;
 		min-height: 20vh;
