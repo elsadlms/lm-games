@@ -22,10 +22,22 @@
 		? article.personality.split(' ').map((word) => normalizeString(word))
 		: []
 
-	// [DEV]
+	// DEV
 	$: displayRevealedWords = false
 
-	$: ready = false
+	$: articleReady = false
+	$: displayUserGuide = true
+	$: isGuessesPanelOpen = true
+	$: userGuideHeight = 0
+
+	const closeUserGuide = () => {
+		displayUserGuide = false
+	}
+
+	const toggleGuessesPanel = () => {
+		if (isGuessesPanelOpen === false) isGuessesPanelOpen = true
+		else isGuessesPanelOpen = false
+	}
 
 	const toggleClueMode = () => {
 		clueMode.update((value) => {
@@ -35,7 +47,9 @@
 	}
 
 	onMount(() => {
-		ready = true
+		setTimeout(() => {
+			articleReady = true
+		}, 200)
 	})
 
 	// [WIP] à clean
@@ -155,12 +169,18 @@
 		}
 	}
 
-	$: articleClasses = ['article', ready ? 'article_ready' : '']
+	$: containerClasses = ['container', articleReady ? 'container_ready' : '']
+	$: containerVariables = [`--user-guide-height: ${userGuideHeight}px;`]
+	$: guessesPanelClasses = ['guesses', isGuessesPanelOpen ? '' : 'guesses_hidden']
+	$: userGuideClasses = ['user-guide', displayUserGuide ? '' : 'user-guide_hidden']
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<div>
+<!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+
+<div class={containerClasses.join(' ')} style={containerVariables.join(' ')}>
 	<!-- [DEV] REVEALED WORDS -->
 	<!-- <div style="border-bottom: 1px solid #ddd;">
 		<p>Solved?? {articleIsSolved()}</p>
@@ -185,8 +205,21 @@
 		<p>clueMode? {$clueMode}</p>
 	</div> -->
 
+	<!-- GUIDE -->
+	<div bind:offsetHeight={userGuideHeight} class={userGuideClasses.join(' ')}>
+		<span
+			>Retrouvez la personnalité disparue qui se cache derrière cet article du <i>Monde</i
+			>&nbsp!</span
+		>
+		<span class="user-guide__close" on:click={closeUserGuide}>
+			<img
+				src="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/close.svg"
+			/>
+		</span>
+	</div>
+
 	<!-- ARTICLE -->
-	<div class={articleClasses.join(' ')}>
+	<div class="article">
 		{#each articleData as block, j}
 			{@const { fontFamily, fontSize, fontWeight } = getTextStyle(block.type)}
 
@@ -223,11 +256,24 @@
 	</div>
 
 	<!-- GUESS -->
-	<div class="guesses">
-		<p
+	<div class={guessesPanelClasses.join(' ')}>
+		<span class="guesses__toggle" on:click={toggleGuessesPanel}>
+			<svg xmlns="http://www.w3.org/2000/svg" width="15" height="9" viewBox="0 0 15 9" fill="none">
+				<path
+					fill-rule="evenodd"
+					clip-rule="evenodd"
+					d="M1.41667 8.83606L-6.19245e-08 7.41939L7.08333 0.336059L14.1667 7.41939L12.75 8.83606L7.08333 3.21366L1.41667 8.83606Z"
+					fill="var(--lmui-c-smoke-medium)"
+				/>
+			</svg>
+		</span>
+
+		<input
 			class="input"
+			placeholder="Devinez un mot"
+			type="text"
 			contenteditable="true"
-			bind:innerText={inputText}
+			bind:value={inputText}
 			on:keypress={handleKeyPress}
 		/>
 
@@ -258,6 +304,42 @@
 </div>
 
 <style lang="scss">
+	.container {
+		display: grid;
+		grid-template-rows: var(--user-guide-height) 1fr;
+		transition: grid-template-rows 200ms, grid-gap 200ms;
+		grid-gap: 32px;
+
+		&:has(.user-guide_hidden) {
+			grid-template-rows: 0 1fr;
+			grid-gap: 0;
+		}
+	}
+
+	.user-guide {
+		background-color: var(--lmui-c-sea-lighter);
+		color: var(--lmui-c-sea-medium);
+		padding: 24px;
+		border-radius: 12px;
+		position: relative;
+		height: max-content;
+		opacity: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.user-guide__close {
+			height: 10px;
+			width: 10px;
+			line-height: 0;
+			cursor: pointer;
+
+			img {
+				width: 100%;
+			}
+		}
+	}
+
 	.article {
 		color: var(--c-primary);
 		font-family: var(--ff-the-antiqua-b);
@@ -267,10 +349,6 @@
 		padding-bottom: 20vh;
 		opacity: 0;
 		transition: opacity 200ms;
-
-		&.article_ready {
-			opacity: 1;
-		}
 
 		p + p {
 			margin-top: 1em;
@@ -288,7 +366,7 @@
 		position: fixed;
 		bottom: 0;
 		left: 50%;
-		transform: translateX(-50%);
+		transform: translateX(-50%) translateY(0);
 		width: calc(var(--main-column-width) + 64px);
 		max-width: calc(var(--main-column-max-width) + 64px);
 		height: auto;
@@ -300,8 +378,22 @@
 		color: var(--lmui-c-smoke-light);
 		border-radius: 12px 12px 0 0;
 		padding: 24px;
+		padding-top: 12px;
 		display: flex;
 		flex-direction: column;
+		opacity: 0;
+		transition: opacity 200ms, transform 200ms;
+
+		.guesses__toggle {
+			align-self: center;
+			padding-bottom: 8px;
+			cursor: pointer;
+
+			svg {
+				transition: transform 200ms;
+				transform: rotate(180deg);
+			}
+		}
 
 		.input {
 			--input-height: 42px;
@@ -385,6 +477,34 @@
 				&:hover {
 					color: var(--lmui-c-snow-darker);
 				}
+			}
+		}
+	}
+
+	.guesses.guesses_hidden {
+		transform: translateX(-50%) translateY(calc(100% - 40px));
+
+		.guesses__toggle {
+			svg {
+				transform: rotate(0);
+			}
+		}
+	}
+
+	.container_ready {
+		.guesses {
+			opacity: 1;
+		}
+
+		.article {
+			opacity: 1;
+		}
+
+		.user-guide {
+			opacity: 1;
+
+			&.user-guide_hidden {
+				opacity: 0;
 			}
 		}
 	}
