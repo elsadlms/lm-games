@@ -6,10 +6,10 @@
 			id: 'redactle',
 			label: 'Redactle',
 		},
-		{
-			id: 'date-article',
-			label: "Dater l'article",
-		},
+		// {
+		// 	id: 'date-article',
+		// 	label: "Dater l'article",
+		// },
 	]
 
 	$: activeRoute = $page.route.id?.slice(1)

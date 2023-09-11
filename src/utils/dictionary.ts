@@ -25,6 +25,7 @@ export const smallWords = [
 	'avec',
 	'qui',
 	'a',
+	'et'
 ]
 
 export const dictionary = [
@@ -143,7 +144,7 @@ export const getWordPotentialRoots = (word: string) => {
 }
 
 export const getCloseWords = (word: string) => {
-  if (word === '') return []
+	if (word === '') return []
 
 	const closeWords = [word]
 	const normalizedWord = normalizeString(word)
