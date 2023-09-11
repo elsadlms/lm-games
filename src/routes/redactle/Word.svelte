@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { clueMode } from './store'
+	import { clueCount, clueMode } from './store'
 
 	export let index: number
 	export let word: string
 	export let hidden: boolean
 	export let highlighted: boolean
+	export let canBeClue: boolean
 	export let textStyle: string
+	export let revealWord: (word: string) => void
 
 	// export let displayLettersCount: boolean;
 
@@ -14,8 +16,20 @@
 	$: displayLettersCount = false
 
 	const handleClick = () => {
-		if ($clueMode) console.log('clue!')
-		else toggleLettersCount()
+		if ($clueMode) {
+			if (canBeClue === false) return
+			if ($clueCount === 0) return
+
+			clueCount.update((value) => {
+				if (value === 0) return 0
+				else return value - 1
+			})
+
+			revealWord(word)
+			return
+		}
+
+		toggleLettersCount()
 	}
 
 	const toggleLettersCount = () => {
@@ -42,8 +56,9 @@
 	$: wordClasses = ['word', highlighted ? 'word_highlighted' : '']
 	$: cacheClasses = [
 		'cache',
+		canBeClue ? 'cache_clue' : '',
 		!hidden ? 'cache_inactive' : '',
-		displayLettersCount ? 'cache__letter-count' : '',
+		displayLettersCount ? 'cache_letter-count' : '',
 	]
 	$: cacheVariables = [`--width: ${width};`]
 </script>
@@ -116,7 +131,7 @@
 			transform: scaleX(0);
 		}
 
-		&.cache__letter-count::after {
+		&.cache_letter-count::after {
 			content: attr(data-word-length);
 			color: #bbb;
 			font-family: monospace;
@@ -132,5 +147,9 @@
 			content: 'i';
 			color: transparent;
 		}
+	}
+
+	:global(.container_clue-mode .cache.cache_clue) {
+		background-color: var(--c-bg-guess-highlighted-light);
 	}
 </style>

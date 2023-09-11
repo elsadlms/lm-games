@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 
 	import type { Article, ArticleElement, ArticleNode } from '~/types'
-	import { clueMode } from './store'
+	import { clueMode, clueCount } from './store'
 
 	import { getRandomElementFromArray } from '~/utils/index'
 	import { normalizeString } from '~/utils/textFunctions'
@@ -12,6 +12,7 @@
 
 	import { prepareArticle, getWordsOccurencesInArticle } from './articleFunctions'
 	import { getTextStyle } from './textStyles'
+	import { onboarding } from './onboarding'
 
 	import Word from './Word.svelte'
 
@@ -28,7 +29,9 @@
 	$: articleReady = false
 	$: displayUserGuide = true
 	$: isGuessesPanelOpen = true
+
 	$: userGuideHeight = 0
+	$: cluePanelHeight = 0
 
 	const closeUserGuide = () => {
 		displayUserGuide = false
@@ -64,6 +67,13 @@
 
 	$: isInAnswer = (word: string) => {
 		return answerArray.includes(normalizeString(word))
+	}
+
+	$: canBeClue = ({ word, type }: { word: string; type: string }) => {
+		if (type === 'title') return false
+		if (type === 'publication') return false
+		if (isInAnswer(word)) return false
+		return true
 	}
 
 	$: guesses = [] as { word: string; occurrences: number }[]
@@ -115,6 +125,7 @@
 	}
 
 	const scrollToWord = (word: ArticleElement) => {
+		if ($clueMode === true) return
 		document.querySelector(`#word_${word.index}`)?.scrollIntoView({ behavior: 'smooth' })
 	}
 
@@ -153,8 +164,9 @@
 		if (e.code === 'Enter') {
 			e.preventDefault()
 
-			// si article dévoilé, on ne fait rien
+			// si article dévoilé ou mode indice, on ne fait rien
 			if (articleIsRevealed === true) return
+			if ($clueMode === true) return
 
 			// si champ vide, on scrolle au mot suivant
 			if (inputText.trim() === '') {
@@ -169,10 +181,18 @@
 		}
 	}
 
-	$: containerClasses = ['container', articleReady ? 'container_ready' : '']
-	$: containerVariables = [`--user-guide-height: ${userGuideHeight}px;`]
+	$: containerClasses = [
+		'container',
+		articleReady ? 'container_ready' : '',
+		$clueMode && $clueCount > 0 ? 'container_clue-mode' : '',
+	]
+	$: containerVariables = [
+		`--user-guide-height: ${userGuideHeight}px;`,
+		`--clue-panel-height: ${cluePanelHeight}px;`,
+	]
 	$: guessesPanelClasses = ['guesses', isGuessesPanelOpen ? '' : 'guesses_hidden']
-	$: userGuideClasses = ['user-guide', displayUserGuide ? '' : 'user-guide_hidden']
+	$: userGuideClasses = ['info-block', 'user-guide', displayUserGuide ? '' : 'user-guide_hidden']
+	$: clueButtonClasses = ['clue-button', $clueCount === 0 ? 'clue-button_disabled' : '']
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -200,22 +220,47 @@
 			</p>
 		{/if}
 	</div> -->
-	<!-- <div>
-		<p on:click={toggleClueMode}>toggle clueMode</p>
-		<p>clueMode? {$clueMode}</p>
-	</div> -->
+
+	<!-- CLUE MODE -->
+	<div bind:offsetHeight={cluePanelHeight} class="clue-panel__container">
+		<div class="info-block clue-panel">
+			<span>
+				Tapez sur un mot pour le révéler. Vous pouvez encore utiliser
+				<span class="bold">{$clueCount} indice{$clueCount > 1 ? 's' : ''}</span>.
+			</span>
+			<span class="close-icon" on:click={toggleClueMode}>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 19 20"
+					fill="none"
+				>
+					<path
+						fill-rule="evenodd"
+						clip-rule="evenodd"
+						d="M9.4266 11.648L1.88525 19.1894L-8.11815e-05 17.304L7.54126 9.76269L2.14544e-06 2.22143L1.88534 0.3361L9.4266 7.87736L16.9679 0.336037L18.8533 2.22137L11.3119 9.76269L18.8533 17.3041L16.968 19.1894L9.4266 11.648Z"
+						fill="#000"
+					/>
+				</svg>
+			</span>
+		</div>
+	</div>
 
 	<!-- GUIDE -->
-	<div bind:offsetHeight={userGuideHeight} class={userGuideClasses.join(' ')}>
-		<span
-			>Retrouvez la personnalité disparue qui se cache derrière cet article du <i>Monde</i
-			>&nbsp!</span
-		>
-		<span class="user-guide__close" on:click={closeUserGuide}>
-			<img
-				src="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/close.svg"
-			/>
-		</span>
+	<div bind:offsetHeight={userGuideHeight} class="user-guide__container">
+		<div class={userGuideClasses.join(' ')}>
+			<div>
+				{#each onboarding as paragraph}
+					<p>{@html paragraph}</p>
+				{/each}
+			</div>
+			<span class="close-icon" on:click={closeUserGuide}>
+				<img
+					src="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/close.svg"
+				/>
+			</span>
+		</div>
 	</div>
 
 	<!-- ARTICLE -->
@@ -240,6 +285,8 @@
 								? false
 								: !isRevealed(element.content)}
 						<Word
+							{revealWord}
+							canBeClue={canBeClue({ word: element.content, type: block.type })}
 							index={element.index}
 							word={element.content}
 							hidden={articleIsRevealed ? false : isHidden}
@@ -268,14 +315,17 @@
 			</svg>
 		</span>
 
-		<input
-			class="input"
-			placeholder="Devinez un mot"
-			type="text"
-			contenteditable="true"
-			bind:value={inputText}
-			on:keypress={handleKeyPress}
-		/>
+		<div class="input__flex-container">
+			<input
+				class="input"
+				placeholder="Devinez un mot"
+				type="text"
+				contenteditable="true"
+				bind:value={inputText}
+				on:keypress={handleKeyPress}
+			/>
+			<p class={clueButtonClasses.join(' ')} on:click={toggleClueMode}>Un&nbsp;indice&nbsp;?</p>
+		</div>
 
 		<ul class="history">
 			{#each guesses as guess, i (i)}
@@ -295,6 +345,7 @@
 		<div class="bar">
 			<div class="bar__stats">
 				<p>{guesses.length} essai{guesses.length > 1 ? 's' : ''}</p>
+				<p>{$clueCount}/3 indices</p>
 			</div>
 			<div class="bar__quit">
 				<p on:click={finishGame}>Abandonner</p>
@@ -304,41 +355,89 @@
 </div>
 
 <style lang="scss">
+	.bold {
+		font-weight: 500;
+	}
+
 	.container {
+		--user-guide-row-height: var(--user-guide-height);
+		--clue-panel-row-height: 0;
+
 		display: grid;
-		grid-template-rows: var(--user-guide-height) 1fr;
+		grid-template-rows: var(--clue-panel-row-height) var(--user-guide-row-height) 1fr;
 		transition: grid-template-rows 200ms, grid-gap 200ms;
-		grid-gap: 32px;
+
+		&.container_clue-mode {
+			--clue-panel-row-height: var(--clue-panel-height);
+		}
 
 		&:has(.user-guide_hidden) {
-			grid-template-rows: 0 1fr;
-			grid-gap: 0;
+			--user-guide-row-height: 0;
+
+			.clue-panel__container {
+				padding-bottom: 32px;
+			}
 		}
+	}
+
+	.info-block {
+		padding: 24px;
+		border-radius: 12px;
+		display: flex;
+		gap: 12px;
+		align-items: center;
+		justify-content: space-between;
+		transition: opacity 200ms;
+	}
+
+	.close-icon {
+		height: 10px;
+		width: 10px;
+		line-height: 0;
+		cursor: pointer;
+		flex-shrink: 0;
+
+		img,
+		svg {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	.clue-panel__container {
+		padding-bottom: 16px;
+		height: max-content;
+		position: sticky;
+		top: 12px;
+		z-index: 5;
+		opacity: 0;
+		transition: opacity 200ms;
+    pointer-events: none;
+	}
+
+	.clue-panel {
+		background-color: var(--c-bg-guess-highlighted-lighter);
+		height: max-content;
+	}
+
+	.user-guide__container {
+		padding-bottom: 32px;
+		height: max-content;
 	}
 
 	.user-guide {
 		background-color: var(--lmui-c-sea-lighter);
 		color: var(--lmui-c-sea-medium);
-		padding: 24px;
-		border-radius: 12px;
 		position: relative;
-		height: max-content;
-		opacity: 0;
-		display: flex;
-		gap: 12px;
-		align-items: center;
-		justify-content: space-between;
+		gap: 48px;
+    opacity: 0;
 
-		.user-guide__close {
-			height: 10px;
-			width: 10px;
-			line-height: 0;
-			cursor: pointer;
-			flex-shrink: 0;
+		p + p {
+			margin-top: 0.6em;
+		}
 
-			img {
-				width: 100%;
-			}
+		.close-icon {
+			align-self: flex-start;
 		}
 	}
 
@@ -350,7 +449,7 @@
 		font-size: 18px;
 		padding-bottom: 20vh;
 		opacity: 0;
-		transition: opacity 200ms;
+		transition: opacity 200ms, margin-top 200ms;
 
 		p + p {
 			margin-top: 1em;
@@ -397,6 +496,12 @@
 			}
 		}
 
+		.input__flex-container {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+		}
+
 		.input {
 			--input-height: 42px;
 			box-sizing: border-box;
@@ -416,6 +521,29 @@
 			background: transparent;
 			box-shadow: inset 0px 1px 1px 1px rgba(0, 0, 0, 0.09), 0px 4px 6px 2px rgba(0, 0, 0, 0);
 			transition: 0.3s ease-in;
+		}
+
+		.clue-button {
+			background-color: var(--lmui-c-snow-darker);
+			color: var(--lmui-c-slate-dark);
+			padding: 8px;
+			align-self: stretch;
+			display: flex;
+			align-items: center;
+			padding: 0 12px;
+			border-radius: var(--lmui-c-rounded-search-radius);
+			font-weight: 500;
+			cursor: pointer;
+			transition: background-color 200ms;
+
+			&:hover {
+				background-color: var(--lmui-c-snow-light);
+			}
+
+			&.clue-button_disabled {
+				cursor: default;
+				opacity: 0.2;
+			}
 		}
 
 		.history {
@@ -467,6 +595,8 @@
 				font-family: var(--ff-marr-sans-condensed);
 				text-transform: uppercase;
 				letter-spacing: 0.08em;
+				display: flex;
+				gap: 16px;
 			}
 
 			&__quit {
@@ -502,11 +632,28 @@
 			opacity: 1;
 		}
 
+		/* WIP - clean et aligner sur clue-panel */
 		.user-guide {
 			opacity: 1;
 
 			&.user-guide_hidden {
 				opacity: 0;
+			}
+		}
+	}
+
+	.container_clue-mode {
+		.clue-panel__container {
+			opacity: 1;
+			pointer-events: all;
+		}
+
+		.guesses > * {
+			opacity: 0.2;
+			pointer-events: none;
+
+			input {
+				pointer-events: none;
 			}
 		}
 	}
