@@ -288,7 +288,9 @@
 		position: fixed;
 		bottom: 0;
 		left: 0;
-		height: 20vh;
+		height: auto;
+		max-height: 80vh;
+		min-height: 20vh;
 		width: 100%;
 		background-color: var(--lmui-c-slate-darker);
 		box-shadow: 0px -6px 24px 0px rgba(0, 0, 0, 0.25);
@@ -324,8 +326,13 @@
 			gap: 8px;
 			flex-wrap: wrap;
 			list-style: none;
-			// overflow-y: scroll;
+			overflow-y: scroll;
+			scrollbar-color: var(--lmui-c-slate-darker);
 			padding: 16px 0;
+
+			&::-webkit-scrollbar {
+				background-color: var(--lmui-c-slate-darker);
+			}
 		}
 
 		.guess {
