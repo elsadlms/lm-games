@@ -325,6 +325,7 @@
 		height: max-content;
 		opacity: 0;
 		display: flex;
+		gap: 12px;
 		align-items: center;
 		justify-content: space-between;
 
@@ -333,6 +334,7 @@
 			width: 10px;
 			line-height: 0;
 			cursor: pointer;
+			flex-shrink: 0;
 
 			img {
 				width: 100%;
