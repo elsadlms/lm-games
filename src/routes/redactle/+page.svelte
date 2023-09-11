@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type { Article, ArticleNode } from '~/types'
+	import { onMount } from 'svelte'
+
+	import type { Article, ArticleElement, ArticleNode } from '~/types'
 	import { clueMode } from './store'
 
 	import { getRandomElementFromArray } from '~/utils/index'
@@ -23,12 +25,19 @@
 	// [DEV]
 	$: displayRevealedWords = false
 
+	$: ready = false
+
 	const toggleClueMode = () => {
 		clueMode.update((value) => {
 			if (value === false) return true
 			else return false
 		})
 	}
+
+	onMount(() => {
+		console.log('mounted!!!')
+		ready = true
+	})
 
 	// [WIP] à clean
 	$: articleIsSolved = () => {
@@ -53,16 +62,48 @@
 	}
 
 	$: highlightedGuess = '' as string
-	$: highlightedWords = getCloseWords(highlightedGuess)
+	$: wordsToHighlight = getCloseWords(highlightedGuess)
+	$: highlightedWords = [] as ArticleElement[]
+	$: indexIntoView = 0
 
 	$: highlightGuess = (word?: string) => {
 		if (word === undefined) return
+
+		if (highlightedGuess === normalizeString(word)) {
+			scrollToNextWord()
+			return
+		}
+
+		resetHighlight()
 		highlightedGuess = normalizeString(word)
 	}
 
-	$: isHighlighted = (word: string) => {
-		let normalizedWord = normalizeString(word)
-		return highlightedWords.includes(normalizedWord)
+	$: isWordHighlighted = (word: ArticleElement) => {
+		const normalizedWord = normalizeString(word.content)
+
+		if (wordsToHighlight.includes(normalizedWord)) {
+			highlightedWords.push(word)
+			if (highlightedWords.length === 1) scrollToWord(word)
+			return true
+		}
+
+		return false
+	}
+
+	$: isGuessHighlighted = (guess: string) => {
+		let normalizedWord = normalizeString(guess)
+		return wordsToHighlight.includes(normalizedWord)
+	}
+
+	const scrollToNextWord = () => {
+		indexIntoView++
+		if (indexIntoView === highlightedWords.length) indexIntoView = 0
+		scrollToWord(highlightedWords[indexIntoView])
+	}
+
+	const scrollToWord = (word: ArticleElement) => {
+		console.log(`scroll to ${word.content}`)
+		document.querySelector(`#word_${word.index}`)?.scrollIntoView({ behavior: 'smooth' })
 	}
 
 	let inputText = ''
@@ -89,21 +130,37 @@
 
 		if (articleIsSolved()) articleIsRevealed = true
 		highlightGuess(word)
+
+		console.log(highlightedWords)
+	}
+
+	const resetHighlight = () => {
+		highlightedWords = []
+		indexIntoView = 0
 	}
 
 	const handleKeyPress = (e: KeyboardEvent) => {
 		if (e.code === 'Enter') {
 			e.preventDefault()
 
-			// si champ vide, on ignore
-			if (inputText.trim() === '') return
+			// si article dévoilé, on ne fait rien
+			if (articleIsRevealed === true) return
+
+			// si champ vide, on scrolle au mot suivant
+			if (inputText.trim() === '') {
+				console.log(highlightedWords)
+				if (wordsToHighlight.length > 0) scrollToNextWord()
+				return
+			}
 
 			const cleanGuess = inputText.trim().toLowerCase()
 			revealWord(cleanGuess)
-
+			resetHighlight()
 			inputText = ''
 		}
 	}
+
+	$: articleClasses = ['article', ready ? 'article_ready' : '']
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -134,7 +191,7 @@
 	</div> -->
 
 	<!-- ARTICLE -->
-	<div class="article">
+	<div class={articleClasses.join(' ')}>
 		{#each articleData as block, j}
 			{@const { fontFamily, fontSize, fontWeight } = getTextStyle(block.type)}
 
@@ -155,9 +212,10 @@
 								? false
 								: !isRevealed(element.content)}
 						<Word
+							index={element.index}
 							word={element.content}
 							hidden={articleIsRevealed ? false : isHidden}
-							highlighted={isHighlighted(element.content)}
+							highlighted={isWordHighlighted(element)}
 							textStyle="{fontWeight} {fontSize}px {fontFamily}"
 						/>{#if element.spaceAfter === true}{' '}{/if}
 					{:else if element.type === 'punctuation'}
@@ -182,7 +240,7 @@
 			{#each guesses as guess, i (i)}
 				{@const guessClasses = [
 					'guess',
-					isHighlighted(guess.word) ? 'guess_highlighted' : '',
+					isGuessHighlighted(guess.word) ? 'guess_highlighted' : '',
 					guess.occurrences === 0 ? 'guess_no-occurrence' : '',
 				]}
 				<li class={guessClasses.join(' ')} on:click={() => highlightGuess(guess.word)}>
@@ -212,6 +270,12 @@
 		font-weight: 500;
 		font-size: 18px;
 		padding-bottom: 20vh;
+		opacity: 0;
+		transition: opacity 200ms;
+
+		&.article_ready {
+			opacity: 1;
+		}
 
 		p + p {
 			margin-top: 1em;
@@ -276,6 +340,7 @@
 			background-color: var(--c-bg-guess);
 			color: var(--c-text-guess);
 			transition: color 400ms, background-color 400ms;
+			cursor: pointer;
 
 			&.guess_highlighted {
 				background-color: var(--c-bg-guess-highlighted);

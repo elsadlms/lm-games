@@ -2,10 +2,12 @@
 	import { onMount } from 'svelte'
 	import { clueMode } from './store'
 
+	export let index: number
 	export let word: string
 	export let hidden: boolean
 	export let highlighted: boolean
 	export let textStyle: string
+
 	// export let displayLettersCount: boolean;
 
 	$: width = 0
@@ -35,6 +37,8 @@
 		width = getWordWidth(word, textStyle) ?? 0
 	})
 
+	const wordId = `word_${index}`
+
 	$: wordClasses = ['word', highlighted ? 'word_highlighted' : '']
 	$: cacheClasses = [
 		'cache',
@@ -46,7 +50,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="container" on:click={handleClick}>
+<div id={wordId} class="container" on:click={handleClick}>
 	{#if hidden === false}
 		<span class={wordClasses.join(' ')}>
 			{word}
