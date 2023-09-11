@@ -35,7 +35,6 @@
 	}
 
 	onMount(() => {
-		console.log('mounted!!!')
 		ready = true
 	})
 
@@ -102,7 +101,6 @@
 	}
 
 	const scrollToWord = (word: ArticleElement) => {
-		console.log(`scroll to ${word.content}`)
 		document.querySelector(`#word_${word.index}`)?.scrollIntoView({ behavior: 'smooth' })
 	}
 
@@ -130,8 +128,6 @@
 
 		if (articleIsSolved()) articleIsRevealed = true
 		highlightGuess(word)
-
-		console.log(highlightedWords)
 	}
 
 	const resetHighlight = () => {
@@ -148,7 +144,6 @@
 
 			// si champ vide, on scrolle au mot suivant
 			if (inputText.trim() === '') {
-				console.log(highlightedWords)
 				if (wordsToHighlight.length > 0) scrollToNextWord()
 				return
 			}
@@ -345,11 +340,12 @@
 			&.guess_highlighted {
 				background-color: var(--c-bg-guess-highlighted);
 				color: var(--c-text-guess-highlighted);
+			}
 
-				&.guess_no-occurrence {
-					background-color: var(--c-bg-guess-highlighted-no-occurrence);
-					color: var(--c-text-guess-highlighted-no-occurrence);
-				}
+			&.guess_no-occurrence {
+				background-color: var(--c-bg-guess-highlighted-no-occurrence);
+				color: var(--c-text-guess-highlighted-no-occurrence);
+				cursor: default;
 			}
 
 			&__word {
