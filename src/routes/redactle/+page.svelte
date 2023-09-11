@@ -292,7 +292,7 @@
 		width: calc(var(--main-column-width) + 64px);
 		max-width: calc(var(--main-column-max-width) + 64px);
 		height: auto;
-		max-height: 80vh;
+		max-height: 50vh;
 		min-height: 20vh;
 		width: 100%;
 		background-color: var(--lmui-c-slate-darker);
