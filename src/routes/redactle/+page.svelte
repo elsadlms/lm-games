@@ -59,6 +59,8 @@
 	}
 
 	const toggleClueMode = () => {
+		if ($clueCount === 0) return
+
 		clueMode.update((value) => {
 			if (value === false) return true
 			else return false
