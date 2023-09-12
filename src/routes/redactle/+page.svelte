@@ -513,11 +513,6 @@
 			align-self: center;
 			padding-bottom: 8px;
 			cursor: pointer;
-
-			svg {
-				transition: transform 200ms;
-				transform: rotate(180deg);
-			}
 		}
 
 		.input__flex-container {
@@ -692,5 +687,19 @@
 
 	:global(.block.block_publication .word) {
 		opacity: 0.8;
+	}
+
+	:global(.guesses__toggle svg) {
+		transition: transform 200ms;
+		transform: rotate(180deg);
+	}
+
+	:global(.guesses__toggle svg) {
+		transition: transform 200ms;
+		transform: rotate(180deg);
+	}
+
+	:global(.guesses.guesses_hidden .guesses__toggle svg) {
+		transform: rotate(0);
 	}
 </style>
