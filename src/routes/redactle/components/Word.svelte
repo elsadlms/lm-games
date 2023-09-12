@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { clueCount, clueMode } from './store'
+	import { clueCount, clueMode } from '../store'
 
 	export let index: number
 	export let word: string

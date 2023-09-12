@@ -1,4 +1,3 @@
-import { text } from '@sveltejs/kit'
 import { normalizeString } from './textFunctions'
 
 // [WIP] renommer

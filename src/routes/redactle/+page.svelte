@@ -5,16 +5,18 @@
 	import { clueMode, clueCount } from './store'
 
 	import { getRandomElementFromArray } from '~/utils/index'
-	import { normalizeString } from '~/utils/textFunctions'
-	import { smallWords, getCloseWords } from '~/utils/dictionary'
 
 	import { articles } from '~/data/redactle/articles'
 
-	import { prepareArticle, getWordsOccurencesInArticle } from './articleFunctions'
-	import { getTextStyle } from './textStyles'
-	import { onboarding } from './onboarding'
+	import { normalizeString } from './constants/textFunctions'
+	import { smallWords, getCloseWords } from './constants/dictionary'
+	import { prepareArticle, getWordsOccurencesInArticle } from './constants/articleFunctions'
+	import { getTextStyle } from './constants/textStyles'
+	import { onboarding } from './constants/onboarding'
 
-	import Word from './Word.svelte'
+	import Word from './components/Word.svelte'
+	import CloseIcon from './components/icons/CloseIcon.svelte'
+	import ToggleIcon from './components/icons/ToggleIcon.svelte'
 
 	const personalityOfTheDay = 'David Bowie'
 	const article: Article = articles.find(
@@ -29,12 +31,22 @@
 	// DEV
 	$: displayRevealedWords = false
 
-	$: articleReady = false
-	$: displayUserGuide = true
+	$: isArticleReady = false
+	$: isArticleRevealed = false
 	$: isGuessesPanelOpen = true
+	$: displayUserGuide = true
+	$: displayCluePanel = $clueMode === true && $clueCount > 0
 
 	$: userGuideHeight = 0
 	$: cluePanelHeight = 0
+
+	let inputText = ''
+
+	onMount(() => {
+		setTimeout(() => {
+			isArticleReady = true
+		}, 200)
+	})
 
 	const closeUserGuide = () => {
 		displayUserGuide = false
@@ -57,39 +69,31 @@
 		}
 	}
 
-	onMount(() => {
-		setTimeout(() => {
-			articleReady = true
-		}, 200)
-	})
-
-	// [WIP] à clean
-	$: articleIsSolved = () => {
-		return answerArray.every((word) => revealedWords.includes(word))
-	}
-	$: articleIsRevealed = false
-
-	$: finishGame = () => {
-		articleIsRevealed = true
+	const finishGame = () => {
+		isArticleRevealed = true
 		highlightedGuess = ''
 		resetHighlight()
 	}
 
-	$: isInAnswer = (word: string) => {
+	$: isArticleSolved = () => {
+		return answerArray.every((word) => revealedWords.includes(word))
+	}
+
+	$: isWordInAnswer = (word: string) => {
 		return answerArray.includes(normalizeString(word))
 	}
 
 	$: canBeClue = ({ word, type }: { word: string; type: string }) => {
 		if (type === 'title') return false
 		if (type === 'publication') return false
-		if (isInAnswer(word)) return false
+		if (isWordInAnswer(word)) return false
 		return true
 	}
 
 	$: guesses = [] as { word: string; occurrences: number }[]
 	$: revealedWords = [...smallWords] as string[]
 
-	$: isRevealed = (word: string) => {
+	$: isWordRevealed = (word: string) => {
 		let normalizedWord = normalizeString(word)
 		return revealedWords.includes(normalizedWord)
 	}
@@ -128,12 +132,6 @@
 		return wordsToHighlight.includes(normalizedWord)
 	}
 
-	const scrollToNextWord = () => {
-		indexIntoView++
-		if (indexIntoView === highlightedWords.length) indexIntoView = 0
-		scrollToWord(highlightedWords[indexIntoView])
-	}
-
 	const scrollToWord = (word: ArticleElement) => {
 		if ($clueMode === true) {
 			if ($clueCount === 0) clueMode.set(false)
@@ -143,7 +141,11 @@
 		document.querySelector(`#word_${word.index}`)?.scrollIntoView({ behavior: 'smooth' })
 	}
 
-	let inputText = ''
+	const scrollToNextWord = () => {
+		indexIntoView++
+		if (indexIntoView === highlightedWords.length) indexIntoView = 0
+		scrollToWord(highlightedWords[indexIntoView])
+	}
 
 	const revealWord = (word: string) => {
 		const normalizedWord = normalizeString(word)
@@ -165,7 +167,7 @@
 		guesses = [{ word, occurrences: guessOccurrences }, ...guesses]
 		revealedWords = [...revealedWords, ...wordsToReveal]
 
-		if (articleIsSolved()) articleIsRevealed = true
+		if (isArticleSolved() === true) isArticleRevealed = true
 		highlightGuess(word)
 	}
 
@@ -179,7 +181,7 @@
 			e.preventDefault()
 
 			// si article dévoilé ou mode indice, on ne fait rien
-			if (articleIsRevealed === true) return
+			if (isArticleRevealed === true) return
 			if ($clueMode === true) return
 
 			// si champ vide, on scrolle au mot suivant
@@ -202,8 +204,8 @@
 
 	$: containerClasses = [
 		'container',
-		articleReady ? 'container_ready' : '',
-		$clueMode && $clueCount > 0 ? 'container_clue-mode' : '',
+		isArticleReady ? 'container_ready' : '',
+		displayCluePanel ? 'container_clue-mode' : '',
 	]
 	$: containerVariables = [
 		`--user-guide-height: ${userGuideHeight}px;`,
@@ -220,26 +222,6 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 
 <div class={containerClasses.join(' ')} style={containerVariables.join(' ')}>
-	<!-- [DEV] REVEALED WORDS -->
-	<!-- <div style="border-bottom: 1px solid #ddd;">
-		<p>Solved?? {articleIsSolved()}</p>
-		<p
-			on:click={() => {
-				displayRevealedWords = !displayRevealedWords
-			}}
-			style="text-decoration: underline; cursor: pointer;"
-		>
-			Mots révélés
-		</p>
-		{#if displayRevealedWords}
-			<p>
-				{#each revealedWords as word}
-					<span>{word}, </span>
-				{/each}
-			</p>
-		{/if}
-	</div> -->
-
 	<!-- CLUE MODE -->
 	<div bind:offsetHeight={cluePanelHeight} class="clue-panel__container">
 		<div class="info-block clue-panel">
@@ -249,21 +231,9 @@
 			</span>
 			<span class="clue-panel__quit" on:click={toggleClueMode}>
 				<span>Revenir au jeu</span>
-				<svg
-					class="close-icon"
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 19 20"
-					fill="none"
-				>
-					<path
-						fill-rule="evenodd"
-						clip-rule="evenodd"
-						d="M9.4266 11.648L1.88525 19.1894L-8.11815e-05 17.304L7.54126 9.76269L2.14544e-06 2.22143L1.88534 0.3361L9.4266 7.87736L16.9679 0.336037L18.8533 2.22137L11.3119 9.76269L18.8533 17.3041L16.968 19.1894L9.4266 11.648Z"
-						fill="var(--c-highlight-dark)"
-					/>
-				</svg>
+				<span class="close-icon">
+					<CloseIcon fillColor={'var(--c-highlight-dark)'} />
+				</span>
 			</span>
 		</div>
 	</div>
@@ -277,9 +247,7 @@
 				{/each}
 			</div>
 			<span class="close-icon" on:click={closeUserGuide}>
-				<img
-					src="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/close.svg"
-				/>
+				<CloseIcon fillColor={'var(--lmui-c-sea-medium)'} />
 			</span>
 		</div>
 	</div>
@@ -301,16 +269,16 @@
 				{#each block.content as element, i}
 					{#if element.type === 'word'}
 						<!-- [WIP] exception pour le premier "publié" -->
-						{@const isHidden =
+						{@const isWordHidden =
 							j === 0 && i === 0 && normalizeString(element.content) === 'publié'
 								? false
-								: !isRevealed(element.content)}
+								: !isWordRevealed(element.content)}
 						<Word
 							{revealWord}
 							canBeClue={canBeClue({ word: element.content, type: block.type })}
 							index={element.index}
 							word={element.content}
-							hidden={articleIsRevealed ? false : isHidden}
+							hidden={isArticleRevealed ? false : isWordHidden}
 							highlighted={isWordHighlighted(element)}
 							textStyle="{fontWeight} {fontSize}px {fontFamily}"
 						/>{#if element.spaceAfter === true}{' '}{/if}
@@ -326,14 +294,7 @@
 	<!-- GUESS -->
 	<div class={guessesPanelClasses.join(' ')}>
 		<span class="guesses__toggle" on:click={toggleGuessesPanel}>
-			<svg xmlns="http://www.w3.org/2000/svg" width="15" height="9" viewBox="0 0 15 9" fill="none">
-				<path
-					fill-rule="evenodd"
-					clip-rule="evenodd"
-					d="M1.41667 8.83606L-6.19245e-08 7.41939L7.08333 0.336059L14.1667 7.41939L12.75 8.83606L7.08333 3.21366L1.41667 8.83606Z"
-					fill="var(--lmui-c-smoke-medium)"
-				/>
-			</svg>
+			<ToggleIcon fillColor={'var(--lmui-c-smoke-medium)'} />
 		</span>
 
 		<div class="input__flex-container">
@@ -421,12 +382,6 @@
 		line-height: 0;
 		cursor: pointer;
 		flex-shrink: 0;
-
-		img,
-		svg {
-			width: 100%;
-			height: 100%;
-		}
 	}
 
 	.clue-panel__container {
@@ -445,6 +400,10 @@
 		background-color: var(--c-highlight-dark);
 		height: max-content;
 		color: #fff;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: flex-start;
+		gap: 18px;
 
 		&__quit {
 			display: flex;

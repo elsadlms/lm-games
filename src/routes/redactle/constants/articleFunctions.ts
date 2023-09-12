@@ -1,7 +1,7 @@
 import type { Article, ArticleNode, ArticleElement } from '~/types'
 
-import { punctuationSpaceRules } from '~/utils/punctuation'
-import { findPunctuationInString, normalizeString } from '~/utils/textFunctions'
+import { punctuationSpaceRules } from './punctuation'
+import { findPunctuationInString, normalizeString } from './textFunctions'
 
 export const prepareArticle = (article: Article) => {
   let index = 0
