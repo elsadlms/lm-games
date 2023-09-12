@@ -683,6 +683,10 @@
 		top: 0;
 	}
 
+	:global(.block.block_publication .word.word_highlighted::before) {
+		top: 0;
+	}
+
 	:global(.block.block_publication .word) {
 		opacity: 0.8;
 	}
