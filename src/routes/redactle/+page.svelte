@@ -125,9 +125,8 @@
 	}
 
 	const scrollToWord = (word: ArticleElement) => {
-    console.log('clue-mode:', $clueMode)
+		console.log('clue-mode:', $clueMode)
 		console.log('clue-count:', $clueCount)
-
 
 		if ($clueMode === true) return
 		document.querySelector(`#word_${word.index}`)?.scrollIntoView({ behavior: 'smooth' })
@@ -188,7 +187,7 @@
 	$: containerClasses = [
 		'container',
 		articleReady ? 'container_ready' : '',
-		$clueMode ? 'container_clue-mode' : '',
+		$clueMode && $clueCount > 0 ? 'container_clue-mode' : '',
 	]
 	$: containerVariables = [
 		`--user-guide-height: ${userGuideHeight}px;`,
