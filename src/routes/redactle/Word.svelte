@@ -15,6 +15,8 @@
 	$: width = 0
 	$: displayLettersCount = false
 
+	let lettersCountTimeout: number | null = null
+
 	const handleClick = () => {
 		if ($clueMode === true) {
 			if (canBeClue === false) return
@@ -29,11 +31,17 @@
 			return
 		}
 
-		toggleLettersCount()
+		revealLettersCount()
 	}
 
-	const toggleLettersCount = () => {
-		displayLettersCount = !displayLettersCount
+	const revealLettersCount = () => {
+		if (lettersCountTimeout != null) clearTimeout(lettersCountTimeout)
+
+		displayLettersCount = true
+
+		lettersCountTimeout = setTimeout(() => {
+			displayLettersCount = false
+		}, 2000)
 	}
 
 	const getWordWidth = (word: string, font: string) => {
@@ -131,7 +139,7 @@
 			transform: scaleX(0);
 		}
 
-		&.cache_letter-count::after {
+		&::after {
 			content: attr(data-word-length);
 			color: #bbb;
 			font-family: monospace;
@@ -140,6 +148,12 @@
 			right: 0;
 			line-height: 100%;
 			padding: 0.1em;
+			opacity: 0;
+			transition: opacity 400ms;
+		}
+
+		&.cache_letter-count::after {
+			opacity: 1;
 		}
 
 		&::before {
