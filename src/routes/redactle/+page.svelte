@@ -377,6 +377,10 @@
 	}
 
 	.container {
+		width: var(--main-column-width);
+		max-width: var(--main-column-max-width);
+		margin: 48px auto;
+
 		--user-guide-row-height: var(--user-guide-height);
 		--clue-panel-row-height: 0;
 
@@ -469,6 +473,9 @@
 	}
 
 	.article {
+		background-color: var(--lmui-c-white);
+		box-shadow: 0px 15px 60px 2px rgba(1, 54, 79, 0.07);
+		padding: 64px;
 		color: var(--c-primary);
 		font-family: var(--ff-the-antiqua-b-non-variable);
 		font-style: normal;
