@@ -18,7 +18,7 @@
 	const handleClick = () => {
 		if ($clueMode) {
 			if (canBeClue === false) return
-			if ($clueCount === 0) return
+			if (hidden === false) return
 
 			clueCount.update((value) => {
 				if (value === 0) return 0

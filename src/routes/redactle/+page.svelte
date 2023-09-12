@@ -184,7 +184,7 @@
 	$: containerClasses = [
 		'container',
 		articleReady ? 'container_ready' : '',
-		$clueMode && $clueCount > 0 ? 'container_clue-mode' : '',
+		$clueMode ? 'container_clue-mode' : '',
 	]
 	$: containerVariables = [
 		`--user-guide-height: ${userGuideHeight}px;`,
@@ -412,7 +412,7 @@
 		z-index: 5;
 		opacity: 0;
 		transition: opacity 200ms;
-    pointer-events: none;
+		pointer-events: none;
 	}
 
 	.clue-panel {
@@ -430,7 +430,7 @@
 		color: var(--lmui-c-sea-medium);
 		position: relative;
 		gap: 48px;
-    opacity: 0;
+		opacity: 0;
 
 		p + p {
 			margin-top: 0.6em;
@@ -438,6 +438,16 @@
 
 		.close-icon {
 			align-self: flex-start;
+		}
+
+		@media (max-width: 800px) {
+			flex-direction: column-reverse;
+			align-self: flex-end;
+			gap: 12px;
+
+			.close-icon {
+				align-self: flex-end;
+			}
 		}
 	}
 
