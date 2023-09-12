@@ -387,7 +387,7 @@
 			--user-guide-row-height: 0;
 
 			.clue-panel__container {
-				padding-bottom: 32px;
+				padding-bottom: 48px;
 			}
 		}
 	}
@@ -433,7 +433,7 @@
 	}
 
 	.user-guide__container {
-		padding-bottom: 32px;
+		padding-bottom: 48px;
 		height: max-content;
 	}
 
@@ -482,6 +482,10 @@
 			font-family: var(--font-family), var(--ff-the-antiqua-b-non-variable);
 			font-size: var(--font-size);
 			font-weight: var(--font-weight);
+
+			&.block_title {
+				margin-top: 0.33em;
+			}
 		}
 	}
 
