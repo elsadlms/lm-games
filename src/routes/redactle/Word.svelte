@@ -20,12 +20,6 @@
 			if (canBeClue === false) return
 			if (hidden === false) return
 
-			if ($clueCount === 0) {
-				clueMode.set(false)
-				toggleLettersCount()
-				return
-			}
-
 			clueCount.update((value) => {
 				if (value === 0) return 0
 				else return value - 1
