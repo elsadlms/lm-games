@@ -71,6 +71,8 @@
 
 	$: finishGame = () => {
 		articleIsRevealed = true
+		highlightedGuess = ''
+		resetHighlight()
 	}
 
 	$: isInAnswer = (word: string) => {
@@ -245,8 +247,10 @@
 				Tapez sur un mot pour le révéler. Vous pouvez encore utiliser
 				<span class="bold">{$clueCount} indice{$clueCount > 1 ? 's' : ''}</span>.
 			</span>
-			<span class="close-icon" on:click={toggleClueMode}>
+			<span class="clue-panel__quit" on:click={toggleClueMode}>
+				<span>Revenir au jeu</span>
 				<svg
+					class="close-icon"
 					xmlns="http://www.w3.org/2000/svg"
 					width="20"
 					height="20"
@@ -257,7 +261,7 @@
 						fill-rule="evenodd"
 						clip-rule="evenodd"
 						d="M9.4266 11.648L1.88525 19.1894L-8.11815e-05 17.304L7.54126 9.76269L2.14544e-06 2.22143L1.88534 0.3361L9.4266 7.87736L16.9679 0.336037L18.8533 2.22137L11.3119 9.76269L18.8533 17.3041L16.968 19.1894L9.4266 11.648Z"
-						fill="#000"
+						fill="var(--c-highlight-dark)"
 					/>
 				</svg>
 			</span>
@@ -429,7 +433,7 @@
 		padding-bottom: 16px;
 		height: max-content;
 		position: sticky;
-		top: 12px;
+		top: 0;
 		z-index: 5;
 		opacity: 0;
 		transition: opacity 200ms;
@@ -437,8 +441,27 @@
 	}
 
 	.clue-panel {
-		background-color: var(--c-bg-guess-highlighted-lighter);
+		border-radius: 0;
+		background-color: var(--c-highlight-dark);
 		height: max-content;
+		color: #fff;
+
+		&__quit {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			background: #fff;
+			border-radius: 24px;
+			padding: 8px 16px;
+			font-weight: 500;
+			color: var(--c-highlight-dark);
+			cursor: pointer;
+			transition: opacity 200ms;
+
+			&:hover {
+				opacity: 0.8;
+			}
+		}
 	}
 
 	.user-guide__container {
@@ -498,6 +521,10 @@
 			&.block_title {
 				margin-top: 0.33em;
 			}
+		}
+
+		@media (max-width: 800px) {
+			padding: 24px;
 		}
 	}
 
@@ -608,7 +635,7 @@
 			cursor: pointer;
 
 			&.guess_highlighted {
-				background-color: var(--c-bg-guess-highlighted);
+				background-color: var(--c-highlight-medium);
 				color: var(--c-text-guess-highlighted);
 			}
 

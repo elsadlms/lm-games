@@ -3,13 +3,15 @@
   --c-text: var(--lmui-c-charcoal-dark);
   --c-body-background: var(--lmui-c-snow-lighter);
 
+
+  /* [WIP] clean / harmoniser */
   --c-bg-guess: var(--lmui-c-slate-medium);
   --c-text-guess: var(--lmui-c-snow-light);
-  --c-bg-guess-highlighted: #e726dc;
-  --c-bg-guess-highlighted-light: #ff25f3;
-  --c-bg-guess-highlighted-lighter: #ffb0fb;
+  --c-highlight-lighter: #ffb0fb;
+  --c-highlight-light: #ff25f3;
+  --c-highlight-medium: #e726dc;
+  --c-highlight-dark: #d50dca;
   --c-text-guess-highlighted: var(--lmui-c-snow-light);
   --c-bg-guess-highlighted-no-occurrence: var(--lmui-c-slate-medium);
   --c-text-guess-highlighted-no-occurrence: var(--lmui-c-smoke-dark);
-
 }

@@ -42,9 +42,9 @@
 		</ul>
 	</nav>
 
-	<div class="container">
+	<main>
 		<slot />
-	</div>
+	</main>
 </div>
 
 <style lang="scss">
@@ -53,10 +53,14 @@
 	}
 
 	:global(.lm-app) {
-		--main-column-width: 90%;
+		--main-column-width: calc(100% - 48px * 2);
 		--main-column-max-width: 1200px;
 		font-family: var(--ff-marr-sans);
 		color: var(--c-text);
+
+		@media (max-width: 800px) {
+			--main-column-width: calc(100% - 12px * 2);
+		}
 	}
 
 	nav {
@@ -71,7 +75,6 @@
 	ul {
 		width: var(--main-column-width);
 		max-width: var(--main-column-max-width);
-		flex-grow: 1;
 		padding: 24px 0;
 		list-style: none;
 		display: flex;
@@ -92,19 +95,4 @@
 			transition: 0.12s ease-in;
 		}
 	}
-
-	// .container {
-	// 	width: var(--main-column-width);
-	// 	max-width: var(--main-column-max-width);
-	// 	background-color: var(--lmui-c-white);
-	// 	box-shadow: 0px 15px 60px 2px rgba(1, 54, 79, 0.07);
-	// 	border-radius: 12px;
-	// 	padding: 64px;
-	// 	margin: 48px auto;
-	// 	z-index: 1;
-
-	// 	@media (max-width: 800px) {
-	// 		padding: 24px;
-	// 	}
-	// }
 </style>

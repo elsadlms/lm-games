@@ -121,7 +121,7 @@
 
 	@keyframes highlightBackground {
 		100% {
-			background-color: var(--c-bg-guess-highlighted-light);
+			background-color: var(--c-highlight-light);
 		}
 	}
 
@@ -164,6 +164,6 @@
 	}
 
 	:global(.container_clue-mode .cache.cache_clue) {
-		background-color: var(--c-bg-guess-highlighted-light);
+		background-color: var(--c-highlight-light);
 	}
 </style>
