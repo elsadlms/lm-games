@@ -125,6 +125,10 @@
 	}
 
 	const scrollToWord = (word: ArticleElement) => {
+    console.log('clue-mode:', $clueMode)
+		console.log('clue-count:', $clueCount)
+
+
 		if ($clueMode === true) return
 		document.querySelector(`#word_${word.index}`)?.scrollIntoView({ behavior: 'smooth' })
 	}

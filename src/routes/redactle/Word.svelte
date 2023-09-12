@@ -25,6 +25,10 @@
 				else return value - 1
 			})
 
+			if ($clueCount === 0) {
+				clueMode.set(false)
+			}
+
 			revealWord(word)
 			return
 		}
