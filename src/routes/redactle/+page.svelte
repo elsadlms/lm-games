@@ -186,6 +186,11 @@
 				return
 			}
 
+			if (inputText.includes(' ')) {
+				// [WIP] ajouter erreur/avertissement/explication
+				return
+			}
+
 			const cleanGuess = inputText.trim().toLowerCase()
 			revealWord(cleanGuess)
 			resetHighlight()
