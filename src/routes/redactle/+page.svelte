@@ -50,6 +50,11 @@
 			if (value === false) return true
 			else return false
 		})
+
+		if ($clueMode === true) {
+			highlightedGuess = ''
+			resetHighlight()
+		}
 	}
 
 	onMount(() => {
@@ -131,7 +136,7 @@
 		console.log('clue-mode:', $clueMode)
 		console.log('clue-count:', $clueCount)
 
-		if ($clueMode === true) return
+		if ($clueMode === true && $clueCount > 0) return
 		document.querySelector(`#word_${word.index}`)?.scrollIntoView({ behavior: 'smooth' })
 	}
 
