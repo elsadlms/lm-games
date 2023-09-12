@@ -39,6 +39,7 @@
 
 	$: userGuideHeight = 0
 	$: cluePanelHeight = 0
+	$: guessesPanelHeight = 0
 
 	let inputText = ''
 
@@ -210,6 +211,7 @@
 	$: containerVariables = [
 		`--user-guide-height: ${userGuideHeight}px;`,
 		`--clue-panel-height: ${cluePanelHeight}px;`,
+		`--guesses-panel-height: ${guessesPanelHeight}px;`,
 	]
 	$: guessesPanelClasses = ['guesses', isGuessesPanelOpen ? '' : 'guesses_hidden']
 	$: userGuideClasses = ['info-block', 'user-guide', displayUserGuide ? '' : 'user-guide_hidden']
@@ -292,7 +294,7 @@
 	</div>
 
 	<!-- GUESS -->
-	<div class={guessesPanelClasses.join(' ')}>
+	<div bind:offsetHeight={guessesPanelHeight} class={guessesPanelClasses.join(' ')}>
 		<span class="guesses__toggle" on:click={toggleGuessesPanel}>
 			<ToggleIcon fillColor={'var(--lmui-c-smoke-medium)'} />
 		</span>
@@ -457,13 +459,13 @@
 	.article {
 		background-color: var(--lmui-c-white);
 		box-shadow: 0px 15px 60px 2px rgba(1, 54, 79, 0.07);
-		padding: 64px;
 		color: var(--c-primary);
 		font-family: var(--ff-the-antiqua-b-non-variable);
 		font-style: normal;
 		font-weight: 500;
 		font-size: 18px;
-		padding-bottom: 20vh;
+		padding: 64px;
+		padding-bottom: calc(var(--guesses-panel-height) + 64px);
 		opacity: 0;
 		transition: opacity 200ms, margin-top 200ms;
 
@@ -484,6 +486,7 @@
 
 		@media (max-width: 800px) {
 			padding: 24px;
+			padding-bottom: calc(var(--guesses-panel-height) + 24px);
 		}
 	}
 
