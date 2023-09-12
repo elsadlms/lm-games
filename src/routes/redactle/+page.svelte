@@ -16,7 +16,10 @@
 
 	import Word from './Word.svelte'
 
-	const article: Article = getRandomElementFromArray(articles as [])
+	const personalityOfTheDay = 'David Bowie'
+	const article: Article = articles.find(
+		(article) => article.personality === personalityOfTheDay,
+	) as Article
 	const articleData: ArticleNode[] = prepareArticle(article)
 
 	const answerArray: string[] = article.personality
