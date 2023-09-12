@@ -1,39 +1,39 @@
 @font-face {
-	font-family: 'The Antiqua B';
-	font-display: swap;
-	font-style: italic;
-	font-weight: 500;
-	src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_500_i.woff') format('woff');
+  font-family: "The-Antiqua-B";
+  font-display: swap;
+  font-style: italic;
+  font-weight: 500;
+  src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_500_i.woff') format('woff');
 }
 
 @font-face {
-	font-family: 'The Antiqua B';
-	font-display: swap;
-	font-style: normal;
-	font-weight: 500;
-	src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_500.woff') format('woff');
+  font-family: "The-Antiqua-B";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+  src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_500.woff') format('woff');
 }
 
 @font-face {
-	font-family: 'The Antiqua B';
-	font-display: swap;
-	font-style: italic;
-	font-weight: 700;
-	src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_700_i.woff') format('woff');
+  font-family: "The-Antiqua-B";
+  font-display: swap;
+  font-style: italic;
+  font-weight: 700;
+  src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_700_i.woff') format('woff');
 }
 
 @font-face {
-	font-family: 'The Antiqua B';
-	font-display: swap;
-	font-style: normal;
-	font-weight: 700;
-	src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_700.woff') format('woff');
+  font-family: "The-Antiqua-B";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+  src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_700.woff') format('woff');
 }
 
 @font-face {
-	font-family: 'The Antiqua B';
-	font-display: swap;
-	font-style: normal;
-	font-weight: 800;
-	src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_800.woff') format('woff');
+  font-family: "The-Antiqua-B";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 800;
+  src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_800.woff') format('woff');
 }

@@ -456,7 +456,7 @@
 
 	.article {
 		color: var(--c-primary);
-		font-family: var(--ff-the-antiqua-b);
+		font-family: var(--ff-the-antiqua-b-non-variable);
 		font-style: normal;
 		font-weight: 500;
 		font-size: 18px;
@@ -470,7 +470,7 @@
 
 		.block {
 			line-height: 140%;
-			font-family: var(--font-family), var(--ff-the-antiqua-b);
+			font-family: var(--font-family), var(--ff-the-antiqua-b-non-variable);
 			font-size: var(--font-size);
 			font-weight: var(--font-weight);
 		}
