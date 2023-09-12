@@ -402,10 +402,10 @@
 		color: #fff;
 		display: grid;
 		grid-template-columns: 1fr auto;
-		align-items: flex-start;
 		gap: 18px;
 
 		&__quit {
+			align-self: flex-start;
 			display: flex;
 			align-items: center;
 			gap: 12px;
