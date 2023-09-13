@@ -4,10 +4,6 @@
 	import type { Article, ArticleElement, ArticleNode } from '~/types'
 	import { clueMode, clueCount } from './store'
 
-	import { getRandomElementFromArray } from '~/utils/index'
-
-	import { articles } from '~/data/redactle/articles'
-
 	import { normalizeString } from './constants/textFunctions'
 	import { smallWords, getCloseWords } from './constants/dictionary'
 	import { prepareArticle, getWordsOccurencesInArticle } from './constants/articleFunctions'
@@ -18,10 +14,8 @@
 	import CloseIcon from './components/icons/CloseIcon.svelte'
 	import ToggleIcon from './components/icons/ToggleIcon.svelte'
 
-	const personalityOfTheDay = 'David Bowie'
-	const article: Article = articles.find(
-		(article) => article.personality === personalityOfTheDay,
-	) as Article
+	export let data
+	const article: Article = data.article as Article
 	const articleData: ArticleNode[] = prepareArticle(article)
 
 	const answerArray: string[] = article.personality
