@@ -4,10 +4,6 @@
 	import type { Article, ArticleElement, ArticleNode } from '~/types'
 	import { clueMode, clueCount } from './store'
 
-	import { getRandomElementFromArray } from '~/utils/index'
-
-	import { articles } from '~/data/redactle/articles'
-
 	import { normalizeString } from './constants/textFunctions'
 	import { smallWords, getCloseWords } from './constants/dictionary'
 	import { prepareArticle, getWordsOccurencesInArticle } from './constants/articleFunctions'
@@ -18,10 +14,8 @@
 	import ToggleIcon from '~/components/icons/ToggleIcon.svelte'
 	import Word from './components/Word.svelte'
 
-	const personalityOfTheDay = 'David Bowie'
-	const article: Article = articles.find(
-		(article) => article.personality === personalityOfTheDay,
-	) as Article
+	export let data
+	const article: Article = data.article as Article
 	const articleData: ArticleNode[] = prepareArticle(article)
 
 	const answerArray: string[] = article.personality
@@ -97,6 +91,8 @@
 	$: revealedWords = [...smallWords] as string[]
 
 	$: isWordRevealed = (word: string) => {
+		console.log(word)
+		console.log(normalizeString(word))
 		let normalizedWord = normalizeString(word)
 		return revealedWords.includes(normalizedWord)
 	}
@@ -170,7 +166,11 @@
 		guesses = [{ word, occurrences: guessOccurrences }, ...guesses]
 		revealedWords = [...revealedWords, ...wordsToReveal]
 
-		if (isArticleSolved() === true) isArticleRevealed = true
+		if (isArticleSolved() === true) {
+			finishGame()
+			return
+		}
+
 		highlightGuess(word)
 	}
 
@@ -194,6 +194,13 @@
 			}
 
 			if (inputText.includes(' ')) {
+				if (normalizeString(inputText) === normalizeString(article.personality as string)) {
+					const guessArray = normalizeString(inputText).split(' ')
+					revealWord(guessArray[0])
+					revealWord(guessArray[1])
+					inputText = ''
+				}
+
 				// [WIP] ajouter erreur/avertissement/explication
 				return
 			}
@@ -274,7 +281,7 @@
 					{#if element.type === 'word'}
 						<!-- [WIP] exception pour le premier "publié" -->
 						{@const isWordHidden =
-							j === 0 && i === 0 && normalizeString(element.content) === 'publié'
+							j === 0 && i === 0 && normalizeString(element.content) === 'publie'
 								? false
 								: !isWordRevealed(element.content)}
 						<Word

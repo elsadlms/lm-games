@@ -4,6 +4,8 @@
   --c-body-background: var(--lmui-c-snow-lighter);
 
 
+  /*  R E D A C T L E  */
+
   /* [WIP] clean / harmoniser */
   --c-bg-guess: var(--lmui-c-slate-medium);
   --c-text-guess: var(--lmui-c-snow-light);
@@ -14,4 +16,8 @@
   --c-text-guess-highlighted: var(--lmui-c-snow-light);
   --c-bg-guess-highlighted-no-occurrence: var(--lmui-c-slate-medium);
   --c-text-guess-highlighted-no-occurrence: var(--lmui-c-smoke-dark);
+  /* --c-cache: #cae1ec;
+  --c-cache-letters-count: var(--lmui-c-sea-medium); */
+  --c-cache: var(--c-primary);
+  --c-cache-letters-count: #bbb;
 }

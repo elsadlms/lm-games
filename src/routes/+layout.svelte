@@ -12,7 +12,8 @@
 		// },
 	]
 
-	$: activeRoute = $page.route.id?.slice(1)
+	$: activeRoute = $page.route.id?.slice(1).split('/')[0]
+
 	$: isActive = (id: string) => {
 		if (id === activeRoute) return true
 		else return false
@@ -20,9 +21,9 @@
 </script>
 
 <svelte:head>
-	<link rel="stylesheet" href="./styles/reset.css" />
-	<link rel="stylesheet" href="./styles/fonts.css" />
-	<link rel="stylesheet" href="./styles/variables.css" />
+	<link rel="stylesheet" href="/styles/reset.css" />
+	<link rel="stylesheet" href="/styles/fonts.css" />
+	<link rel="stylesheet" href="/styles/variables.css" />
 </svelte:head>
 
 <div>

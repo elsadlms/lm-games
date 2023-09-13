@@ -1,8 +1,8 @@
 export const normalizeString = (string: string) => {
-  let normalizedString = string.toString()
+  let normalizedString = string.toString().toLowerCase()
   normalizedString = removeAccentsFromString(normalizedString)
   normalizedString = removeSpecialCharactersFromString(normalizedString)
-  return normalizedString.trim().toLowerCase()
+  return normalizedString.trim()
 }
 
 const specialCharaRegexString = `[^A-Za-zÀ-ÖØ-öø-ÿœű\\s\\d]`
