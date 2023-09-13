@@ -8,7 +8,10 @@ export const load = ({ params }) => {
     year: '2-digit',
   }).replaceAll('/', '')
 
-  const articleDate = params.date !== undefined ? params.date : todaysDate
+  const articleDate = params.date !== undefined && calendar.has(params.date)
+    ? params.date
+    : todaysDate
+
   const articleId = calendar.get(articleDate)
 
   const article = articles.find(

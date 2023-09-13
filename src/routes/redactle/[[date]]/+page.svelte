@@ -91,6 +91,8 @@
 	$: revealedWords = [...smallWords] as string[]
 
 	$: isWordRevealed = (word: string) => {
+		console.log(word)
+		console.log(normalizeString(word))
 		let normalizedWord = normalizeString(word)
 		return revealedWords.includes(normalizedWord)
 	}
@@ -279,7 +281,7 @@
 					{#if element.type === 'word'}
 						<!-- [WIP] exception pour le premier "publié" -->
 						{@const isWordHidden =
-							j === 0 && i === 0 && normalizeString(element.content) === 'publié'
+							j === 0 && i === 0 && normalizeString(element.content) === 'publie'
 								? false
 								: !isWordRevealed(element.content)}
 						<Word
