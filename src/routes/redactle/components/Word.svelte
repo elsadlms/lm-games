@@ -128,7 +128,7 @@
 	.cache {
 		height: 1.1em;
 		width: calc(var(--width) * 1px);
-		background-color: var(--c-primary);
+		background-color: var(--c-cache);
 		position: relative;
 		top: 0.2em;
 		cursor: pointer;
@@ -141,7 +141,7 @@
 
 		&::after {
 			content: attr(data-word-length);
-			color: #bbb;
+			color: var(--c-cache-letters-count);
 			font-family: monospace;
 			font-size: 0.7em;
 			position: absolute;
