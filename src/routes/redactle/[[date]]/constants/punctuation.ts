@@ -86,6 +86,11 @@ export const punctuationSpaceRules: punctuationSpaceRule[] = [
     spaceAfter: true,
   },
   {
+    value: '—',
+    spaceBefore: true,
+    spaceAfter: true,
+  },
+  {
     value: '·',
     spaceBefore: false,
     spaceAfter: false,
