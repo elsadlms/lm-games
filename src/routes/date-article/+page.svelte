@@ -19,7 +19,6 @@
 	$: isYearSubmitted = false
 	$: isArticleFullyDisplayed = false
 	$: nodesToDisplayCount = 1
-	$: nodesToDisplay = article.nodes.slice(0, nodesToDisplayCount)
 	$: selectedYear = yearEnd
 	$: score = Math.abs(article.publicationYear - selectedYear)
 
@@ -42,7 +41,13 @@
 		'display-next-button',
 		isArticleFullyDisplayed === true ? 'display-next-button_disabled' : '',
 	]
-	$: sliderClasses = ['slider', isYearSubmitted === true ? 'slider-inactive' : '']
+	$: sliderClasses = ['slider', isYearSubmitted === true ? 'slider_disabled' : '']
+	$: sliderStyle = [
+		`--year-start: ${yearStart};`,
+		`--year-end: ${yearEnd};`,
+		`--year-selected: ${selectedYear};`,
+	]
+	$: answerClasses = ['answer', isYearSubmitted === true ? '' : 'answer_hidden']
 	$: userInfoClasses = ['user-guide', displayUserGuide === true ? '' : 'user-guide_hidden']
 </script>
 
@@ -65,8 +70,13 @@
 
 	<div class="article">
 		<div class="article__content">
-			{#each nodesToDisplay as node}
-				<p class={node.type}>
+			{#each article.nodes as node, i}
+				{@const nodeClasses = [
+					'block',
+					`block_${node.type}`,
+					i < nodesToDisplayCount ? 'block_revealed' : '',
+				]}
+				<p class={nodeClasses.join(' ')}>
 					{node.content}
 				</p>
 			{/each}
@@ -77,26 +87,20 @@
 		</p>
 	</div>
 
-	<div>
-		<div>
-			<input
-				bind:value={selectedYear}
-				type="range"
-				min={yearStart}
-				max={yearEnd}
-				class={sliderClasses.join(' ')}
-			/>
+	<div class="guess">
+		<p class="question">De quelle année date cet extrait d’article&nbsp;?</p>
+
+		<div class={sliderClasses.join(' ')} style={sliderStyle.join(' ')}>
+			<input bind:value={selectedYear} type="range" min={yearStart} max={yearEnd} />
 			<p>{selectedYear}</p>
 		</div>
 
 		<p on:click={submitDate}>Valider</p>
 
-		{#if isYearSubmitted === true}
-			<div>
-				<p>Cet article a été publié en {article.publicationYear}</p>
-				<p>Écart : {score}</p>
-			</div>
-		{/if}
+		<div class={answerClasses.join(' ')}>
+			<p>Cet article a été publié en {article.publicationYear}</p>
+			<p>Écart : {score}</p>
+		</div>
 	</div>
 </div>
 
@@ -175,13 +179,24 @@
 			margin-top: 1em;
 		}
 
-		.title {
-			font-weight: 800;
-			font-size: 42px;
-		}
-
 		> div p:last-child {
 			padding-bottom: 64px;
+		}
+
+		.block {
+			opacity: 0;
+			height: 0;
+			transition: opacity 200ms;
+
+			&.block_revealed {
+				opacity: 1;
+				height: auto;
+			}
+
+			&.block_title {
+				font-weight: 800;
+				font-size: 32px;
+			}
 		}
 	}
 
@@ -196,10 +211,48 @@
 		cursor: pointer;
 		background: var(--lmui-c-sea-lighter);
 		color: var(--lmui-c-sea-medium);
+
+		&.display-next-button_disabled {
+			opacity: 0.2;
+			pointer-events: none;
+		}
 	}
 
-	.slider.slider-inactive {
-		pointer-events: none;
-		filter: grayscale(1);
+	.guess {
+		padding: 24px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+
+		.question {
+			font-family: var(--ff-the-antiqua-b);
+			font-weight: 700;
+			font-size: 18px;
+		}
+	}
+
+	.answer {
+		opacity: 1;
+		transition: opacity 200ms;
+
+		&.answer_hidden {
+			opacity: 0;
+		}
+	}
+
+	.slider {
+		&::before {
+			display: block;
+			content: var(--year-start);
+		}
+		&::after {
+			content: var(--year-end);
+		}
+
+		&.slider_disabled {
+			pointer-events: none;
+			filter: grayscale(1);
+		}
 	}
 </style>
