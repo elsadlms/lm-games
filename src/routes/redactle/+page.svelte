@@ -170,7 +170,11 @@
 		guesses = [{ word, occurrences: guessOccurrences }, ...guesses]
 		revealedWords = [...revealedWords, ...wordsToReveal]
 
-		if (isArticleSolved() === true) isArticleRevealed = true
+		if (isArticleSolved() === true) {
+			finishGame()
+			return
+		}
+
 		highlightGuess(word)
 	}
 
@@ -194,6 +198,13 @@
 			}
 
 			if (inputText.includes(' ')) {
+				if (normalizeString(inputText) === normalizeString(article.personality as string)) {
+					const guessArray = normalizeString(inputText).split(' ')
+					revealWord(guessArray[0])
+					revealWord(guessArray[1])
+					inputText = ''
+				}
+
 				// [WIP] ajouter erreur/avertissement/explication
 				return
 			}
