@@ -597,7 +597,7 @@ export const articles: Article[] = [
       {
         type: 'heading',
         content:
-          'Louis Aragon est mort à son domicile parisien dans la nuit du jeudi, 23 au vendredi 24 décembre — "dans la paix et la dignité", selon les termes du communiqué médical du professeur Jean-Paul Camus et du docteur Colette Lavéant.',
+          'Louis Aragon est mort à son domicile parisien dans la nuit du jeudi 23 au vendredi 24 décembre — "dans la paix et la dignité", selon les termes du communiqué médical du professeur Jean-Paul Camus et du docteur Colette Lavéant.',
       },
       {
         type: 'paragraph',
