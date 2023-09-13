@@ -37,3 +37,35 @@
   font-weight: 800;
   src: url('/fonts/the-antiqua-b/TheAntiquaB_LT_800.woff') format('woff');
 }
+
+@font-face {
+  font-family: "Marr-Sans";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/marr-sans/MarrSans_400.woff') format('woff');
+}
+
+@font-face {
+  font-family: "Marr-Sans";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+  src: url('/fonts/marr-sans/MarrSans_500.woff') format('woff');
+}
+
+@font-face {
+  font-family: "Marr-Sans";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600;
+  src: url('/fonts/marr-sans/MarrSans_600.woff') format('woff');
+}
+
+@font-face {
+  font-family: "Marr-Sans";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+  src: url('/fonts/marr-sans/MarrSans_700.woff') format('woff');
+}

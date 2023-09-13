@@ -3,7 +3,7 @@ import type { ArticleNodeStyle } from '~/types'
 const textStyles: ArticleNodeStyle[] = [
   {
     type: 'publication',
-    fontFamily: 'Marr Sans',
+    fontFamily: 'Marr-Sans',
     fontSize: 14,
     fontWeight: 500,
   },
@@ -15,7 +15,7 @@ const textStyles: ArticleNodeStyle[] = [
   },
   {
     type: 'heading',
-    fontFamily: "Marr Sans",
+    fontFamily: "Marr-Sans",
     fontSize: 24,
     fontWeight: 500,
   },
