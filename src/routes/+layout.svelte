@@ -26,7 +26,7 @@
 </svelte:head>
 
 <div>
-	<nav>
+	<!-- <nav>
 		<ul>
 			{#each routes as route}
 				{@const buttonClasses = [
@@ -41,7 +41,7 @@
 				</li>
 			{/each}
 		</ul>
-	</nav>
+	</nav> -->
 
 	<main>
 		<slot />

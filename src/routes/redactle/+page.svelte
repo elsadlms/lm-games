@@ -14,9 +14,9 @@
 	import { getTextStyle } from './constants/textStyles'
 	import { onboarding } from './constants/onboarding'
 
+	import CloseIcon from '~/components/icons/CloseIcon.svelte'
+	import ToggleIcon from '~/components/icons/ToggleIcon.svelte'
 	import Word from './components/Word.svelte'
-	import CloseIcon from './components/icons/CloseIcon.svelte'
-	import ToggleIcon from './components/icons/ToggleIcon.svelte'
 
 	const personalityOfTheDay = 'David Bowie'
 	const article: Article = articles.find(
