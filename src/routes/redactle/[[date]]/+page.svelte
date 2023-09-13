@@ -91,8 +91,6 @@
 	$: revealedWords = [...smallWords] as string[]
 
 	$: isWordRevealed = (word: string) => {
-		console.log(word)
-		console.log(normalizeString(word))
 		let normalizedWord = normalizeString(word)
 		return revealedWords.includes(normalizedWord)
 	}
