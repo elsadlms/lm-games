@@ -24,7 +24,7 @@ export const articles: Article[] = [
       {
         type: 'paragraph',
         content:
-          "Le chanteur américain Michael Jackson, 50 ans, est mort, jeudi 25 juin, après avoir été hospitalisé en urgence dans un hôpital de Los Angeles. \"M. Jackson a été transporté à l'hôpital (...), il était inconscient lorsqu'il a été admis et son décès a été constaté à 14 h 26 (23 h 26 à Paris) cet après-midi\", a déclaré un porte-parole de l'institut médico-légal du comté de Los Angeles, le lieutenant Fred Corral. Selon le Los Angeles Times et le site Internet TMZ.com, qui a le premier donné la nouvelle, Jackson a été victime d'un arrêt cardiaque à son domicile de Holmby Hills, un quartier opulent du nord-ouest de la ville où il louait un manoir depuis janvier.",
+          "Le chanteur américain Michael Jackson, 50 ans, est mort, jeudi 25 juin, après avoir été hospitalisé en urgence dans un hôpital de Los Angeles. \"M. Jackson a été transporté à l'hôpital (…), il était inconscient lorsqu'il a été admis et son décès a été constaté à 14 h 26 (23 h 26 à Paris) cet après-midi\", a déclaré un porte-parole de l'institut médico-légal du comté de Los Angeles, le lieutenant Fred Corral. Selon le Los Angeles Times et le site Internet TMZ.com, qui a le premier donné la nouvelle, Jackson a été victime d'un arrêt cardiaque à son domicile de Holmby Hills, un quartier opulent du nord-ouest de la ville où il louait un manoir depuis janvier.",
       },
       {
         type: 'paragraph',
