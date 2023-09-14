@@ -629,4 +629,110 @@ export const articles: Article[] = [
       },
     ],
   },
+  {
+    id: 7898,
+    url: 'https://www.lemonde.fr/disparitions/article/2020/07/28/l-avocate-gisele-halimi-defenseuse-passionnee-de-la-cause-des-femmes-est-morte_6047506_3382.html',
+    publicationYear: 2020,
+    publicationDate: '28 juillet 2020',
+    personality: 'Gisèle Halimi',
+    nodes: [
+      {
+        type: 'publication',
+        content: 'Publié le 28 juillet 2020',
+      },
+      {
+        type: 'title',
+        content: 'Gisèle Halimi, défenseuse passionnée de la cause des femmes, est morte',
+      },
+      {
+        type: 'heading',
+        content:
+          'La célèbre avocate, qui a défendu des militants FLN pendant la guerre d’Algérie et s’est battue pour la libéralisation de l’avortement et la criminalisation du viol, est morte à l’âge de 93 ans.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Pour parler de Gisèle Halimi, qui est morte le 28 juillet, au lendemain de son anniversaire, deux mots s’imposent d’emblée : battante, insoumise.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Le 27 juillet 1927, dans le quartier de la Goulette, à Tunis, lorsque naît Zeiza Gisèle Elise Taïeb, personne ne fait la fête. Comme elle le raconte dans La Cause des femmes (Grasset, 1974), son père, Edouard, est si désolé d’avoir une fille qu’il met plusieurs semaines à avouer sa naissance à ses amis. Ce père qui n’aime pas les filles aimera pourtant passionnément « sa » fille. Tandis qu’entre Gisèle et sa mère les relations ont toujours été difficiles, comme on peut le lire tant dans Le Lait de l’oranger (Gallimard, 1988), émouvant récit autobiographique, que dans Fritna (Plon, 2000).',
+      },
+      {
+        type: 'paragraph',
+        content: 'Mme Taïeb aurait sans doute voulu une fille plus docile. La jeune Gisèle résiste à tout, allant jusqu’à faire, à 10 ans, une grève de la faim pour appuyer son droit à la lecture. Elle défie les sentiments religieux de sa famille juive en refusant d’embrasser la mézouza avant d’aller en classe.',
+      },
+      {
+        type: 'paragraph',
+        content: 'A 16 ans, elle refuse un mariage arrangé, obtient de faire ses études de droit en France, revient à Tunis et s’inscrit au barreau en 1949. La rebelle qu’elle a toujours été devient militante. D’abord pour l’indépendance de son pays dont, tout en étant Française, elle n’a jamais abandonné la nationalité. Elle a toujours aimé la Tunisie, y est régulièrement retournée et, à Paris, elle aimait cuisiner, pour ses amis, des plats tunisiens.',
+      },
+      {
+        type: 'paragraph',
+        content: 'En s’installant en France en 1956 et en épousant Paul Halimi, un administrateur civil, elle change de nom et donne naissance à deux fils. Elle divorce, tout en gardant ce nom par lequel elle s’est faite connaître, et épouse Claude Faux, qui fut le secrétaire de Jean-Paul Sartre. Elle a avec lui un troisième fils. Jamais de fille. C’est peut-être pour cela qu’elle aura, avec sa petite-fille, la relation passionnelle qu’elle analyse dans Histoire d’une passion (Plon, 2011), son dernier livre publié.',
+      },
+      {
+        type: 'subtitle',
+        content: 'Longue bataille contre la torture',
+      },
+      {
+        type: 'paragraph',
+        content: 'Quand commence la guerre d’Algérie, c’est une évidence pour Gisèle Halimi de militer aux côtés de Sartre et de ceux qui signeront, en septembre 1960, le Manifeste des 121. En 1960, apprenant qu’une Algérienne de 22 ans, Djamila Boupacha, accusée d’avoir posé une bombe a été arrêtée, torturée et violée par des soldats français, elle décide de la défendre.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Commence alors une longue bataille, dans laquelle Gisèle Halimi entraîne Simone de Beauvoir. Celle-ci écrit une tribune dans Le Monde et crée un comité, avec, notamment, Jean-Paul Sartre, Louis Aragon, Geneviève de Gaulle, Germaine Tillion. Djamila est finalement jugée en France, à Caen, en 1961. En dépit de la brillante plaidoirie de Gisèle Halimi, elle est condamnée à mort, mais sera amnistiée et libérée en 1962 après les accords d’Evian qui mettent fin à la guerre d’Algérie.',
+      },
+      {
+        type: 'paragraph',
+        content: 'La même année, chez Gallimard, Simone de Beauvoir et Gisèle Halimi publient, avec d’autres, Djamila Boupacha (Gallimard), un livre de témoignages sur toute cette affaire. Sur la couverture, le portrait de Djamila est réalisé par Pablo Picasso. L’histoire de Djamila Boupacha et de Gisèle Halimi est devenue un téléfilm, réalisé par Caroline Huppert. Pour Djamila a été diffusé pour la première fois le 20 mars 2012 sur France 3. Le rôle de Djamila Boupacha est tenu par Hafsia Herzi et celui de Gisèle Halimi par Marina Hands.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Dès lors, Gisèle Halimi est considérée comme l’avocate des causes difficiles. Qui l’a entendue plaider, même dans des affaires plus mineures, connaît le charme de sa parole. Et son aplomb. Un jour, opposée à un Robert Badinter plutôt condescendant, elle a commencé sa plaidoirie par un retentissant : « Je ne me laisserai pas renvoyer à mes fourneaux par le professeur Badinter. »',
+      },
+      {
+        type: 'paragraph',
+        content: 'Sans être la porte-drapeau d’un parti, Gisèle Halimi est, depuis toujours, engagée en politique. C’est pourquoi, en 1965, avec Evelyne Sullerot, Colette Audry et quelques autres, elle fonde le Mouvement démocratique féminin pour soutenir la candidature de François Mitterrand à la présidence de la République.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Féministe, sans que le mot ait encore un sens pour elle, elle l’a été depuis son enfance à la Goulette. Aussi, logiquement, on la retrouve en 1971 parmi les signataires du Manifeste des 343, publié par Le Nouvel Observateur. Toutes ces femmes déclarent avoir avorté, donc avoir violé la loi, et plaident pour que les femmes n’aient plus à mettre leur vie en danger en avortant clandestinement. La même année, Gisèle Halimi fonde avec Simone de Beauvoir le mouvement Choisir la cause des femmes, qui prendra part à toutes les luttes féministes et organisera la défense de nombreuses femmes maltraitées.',
+      },
+      {
+        type: 'subtitle',
+        content: 'Le procès de Bobigny',
+      },
+      {
+        type: 'paragraph',
+        content: 'En 1972, une jeune fille de 16 ans, Marie-Claire, et sa mère qui l’a aidée à avorter, sont poursuivies en justice. Elles demandent à Gisèle Halimi de les défendre. Bien décidée à plaider, non seulement pour ces deux femmes, mais pour la libéralisation de l’avortement, Gisèle Halimi fait venir au procès à Bobigny de prestigieux témoins, dont le professeur de médecine Paul Milliez, fervent catholique, père de six enfants. Marie-Claire est relaxée, sa mère condamnée mais dispensée de peine.',
+      },
+      {
+        type: 'paragraph',
+        content: 'C’est une grande avancée vers la loi sur l’interruption volontaire de grossesse, qui, portée par Simone Veil après l’élection de Valéry Giscard d’Estaing, sera promulguée en janvier 1975. Cette affaire est, elle aussi, devenue un téléfilm, Le Procès de Bobigny, réalisé par François Luciani. Il a été diffusé en mars et en avril 2006 sur plusieurs chaînes, dont France 2. Anouk Grinberg interprète Gisèle Halimi, et Sandrine Bonnaire, la mère de Marie-Claire.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Pour les féministes, une nouvelle lutte commence alors, demandant que le viol soit reconnu comme un crime. Une fois de plus, Gisèle Halimi est là. En mai 1978, à Aix-en-Provence, devant les assises des Bouches-du-Rhône, elle représente deux jeunes femmes Belges qui ont porté plainte contre trois hommes.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Dans la nuit du 21 au 22 août 1974, elles ont été violées alors qu’elles campaient dans une calanque. Les trois hommes plaident non coupables. Hors du prétoire, Gisèle Halimi est bousculée, injuriée, menacée. Les hommes sont condamnés. Et de nouveau ce procès ouvre le chemin vers la loi de 1980, qui reconnaît le viol comme un crime. L’affaire a fait l’objet d’un documentaire en 2014 réalisé par Cédric Condon (Le Procès du viol) et d’un téléfilm, Le Viol, d’Alain Tasma, diffusé en 2017.',
+      },
+      {
+        type: 'subtitle',
+        content: 'L’écriture, son autre passion',
+      },
+      {
+        type: 'paragraph',
+        content: 'En 1981, le candidat que Gisèle Halimi avait soutenu dès 1965, François Mitterrand, devient président de la République. Elle a alors envie de participer à l’aventure et devient députée apparentée socialiste de la 4e circonscription de l’Isère, avant d’être ambassadrice de France à l’Unesco, de 1985 à 1986. Au terme de tout cela, elle retourne avec plaisir à son métier d’avocate, et décide de consacrer plus de temps à son autre passion : écrire.',
+      },
+      {
+        type: 'paragraph',
+        content: 'Elle publiera une quinzaine de livres entre 1988 et 2011, dont le dernier, Histoire d’une passion, à l’âge de 84 ans. Une occasion de dire, dans un entretien au Monde, son sentiment sur la vieillesse : « La seule crainte, si l’on est en bonne santé, est celle de la faiblesse intellectuelle. Or je me sens en pleine capacité. Plus riche même, de l’expérience. Bien sûr, il y a certaines limites. Autrefois, pour un procès d’assises, comme celui de Bobigny, je pouvais travailler une nuit entière sur un dossier, me doucher, prendre un café et aller plaider. Aujourd’hui, je ne pourrais pas aller au-delà d’une heure du matin. Mais c’est assez minime. Ce n’est pas si désagréable de vieillir si l’on ne coupe pas la vie en étapes, si on ne se dit pas : “Maintenant c’est fini, je suis entrée dans la vieillesse”. »',
+      },
+      {
+        type: 'paragraph',
+        content: 'Citant Marguerite Yourcenar, qu’elle admirait, elle voulait mourir comme elle avait vécu : « Les yeux ouverts. »',
+      },
+    ],
+  },
 ]
