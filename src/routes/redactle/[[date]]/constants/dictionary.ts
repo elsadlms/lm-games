@@ -22,10 +22,17 @@ export const smallWords = [
   'pour',
   'leur',
   'avec',
+  'qu',
   'qui',
   'a',
   'et',
-  'mais'
+  'mais',
+  's',
+  'se',
+  'son',
+  'sa',
+  'ses',
+  'en'
 ]
 
 export const dictionary = [
