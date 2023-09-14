@@ -11,7 +11,7 @@ export const prepareArticle = (article: Article) => {
     const nodeData = node
     if (node.type === 'publication') nodeData.content = node.content.toUpperCase()
 
-    const blockData = nodeData.content.split(' ').flatMap((element) => {
+    const blockData = nodeData.content.replaceAll(' ', ' ').split(' ').flatMap((element) => {
 
       const stringWithPunctuation = findPunctuationInString(element)
 
