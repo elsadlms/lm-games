@@ -186,35 +186,38 @@
 	const handleKeyPress = (e: KeyboardEvent) => {
 		if (e.code === 'Enter') {
 			e.preventDefault()
-
-			// si article dévoilé ou mode indice, on ne fait rien
-			if (isArticleRevealed === true) return
-			if ($clueMode === true) return
-
-			// si champ vide, on scrolle au mot suivant
-			if (inputText.trim() === '') {
-				if (wordsToHighlight.length > 0) scrollToNextWord()
-				return
-			}
-
-			if (inputText.includes(' ')) {
-				if (normalizeString(inputText) === normalizeString(article.personality)) {
-					const guessArray = inputText.split(' ')
-					for (const word of guessArray) {
-						revealWord(word)
-					}
-					inputText = ''
-				}
-
-				// [WIP] ajouter erreur/avertissement/explication
-				return
-			}
-
-			const cleanGuess = inputText.trim().toLowerCase()
-			revealWord(cleanGuess)
-			resetHighlight()
-			inputText = ''
+			handleSubmit()
 		}
+	}
+
+	const handleSubmit = () => {
+		// si article dévoilé ou mode indice, on ne fait rien
+		if (isArticleRevealed === true) return
+		if ($clueMode === true) return
+
+		// si champ vide, on scrolle au mot suivant
+		if (inputText.trim() === '') {
+			if (wordsToHighlight.length > 0) scrollToNextWord()
+			return
+		}
+
+		if (inputText.includes(' ')) {
+			if (normalizeString(inputText) === normalizeString(article.personality)) {
+				const guessArray = inputText.split(' ')
+				for (const word of guessArray) {
+					revealWord(word)
+				}
+				inputText = ''
+			}
+
+			// [WIP] ajouter erreur/avertissement/explication
+			return
+		}
+
+		const cleanGuess = inputText.trim().toLowerCase()
+		revealWord(cleanGuess)
+		resetHighlight()
+		inputText = ''
 	}
 
 	$: containerClasses = [
@@ -314,14 +317,17 @@
 		</span>
 
 		<div class="input__flex-container">
-			<input
-				class="input"
-				placeholder="Devinez un mot"
-				type="text"
-				contenteditable="true"
-				bind:value={inputText}
-				on:keypress={handleKeyPress}
-			/>
+			<div class="input__container">
+				<input
+					class="input"
+					placeholder="Devinez un mot"
+					type="text"
+					contenteditable="true"
+					bind:value={inputText}
+					on:keypress={handleKeyPress}
+				/>
+				<p class={clueButtonClasses.join(' ')} on:click={handleSubmit}>Valider</p>
+			</div>
 			<p class={clueButtonClasses.join(' ')} on:click={toggleClueMode}>Un&nbsp;indice&nbsp;?</p>
 		</div>
 
@@ -533,13 +539,21 @@
 		}
 
 		.input__flex-container {
+			--input-height: 42px;
 			display: flex;
 			align-items: center;
 			gap: 16px;
+			flex-wrap: wrap;
+		}
+
+		.input__container {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			flex-grow: 1;
 		}
 
 		.input {
-			--input-height: 42px;
 			box-sizing: border-box;
 			height: var(--input-height);
 			line-height: var(--input-height);
@@ -560,6 +574,8 @@
 		}
 
 		.clue-button {
+			margin-left: auto;
+			height: var(--input-height);
 			background-color: var(--lmui-c-snow-darker);
 			color: var(--lmui-c-slate-dark);
 			padding: 8px;
