@@ -26,6 +26,21 @@
 	$: displayUserGuide = true
 	$: displayCluePanel = $clueMode === true && $clueCount > 0
 
+	$: infoMessages = [
+		{
+			id: 'noBlankInInput',
+			type: 'error',
+			content: 'Il ne faut saisir qu’un seul mot à la fois&nbsp;!',
+			isActive: false,
+		},
+		{
+			id: 'duplicateGuess',
+			type: 'info',
+			content: 'Vous avez déjà essayé ce mot&nbsp;!',
+			isActive: false,
+		},
+	]
+
 	$: userGuideHeight = 0
 	$: cluePanelHeight = 0
 	$: guessesPanelHeight = 0
@@ -159,7 +174,8 @@
 				return getCloseWords(guess.word).includes(normalizedWord)
 			})
 			// ...on highlight à nouveau le mot
-			highlightGuess(duplicateGuess?.word)
+			if (highlightedGuess !== normalizeString(word)) highlightGuess(duplicateGuess?.word)
+			displayInfoMessage('duplicateGuess')
 			return
 		}
 
@@ -183,6 +199,20 @@
 		indexIntoView = 0
 	}
 
+	const displayInfoMessage = (id: string) => {
+		const activeInfoMessage = infoMessages.find((message) => message.id === id)
+
+		if (activeInfoMessage === undefined) return
+
+		activeInfoMessage.isActive = true
+		infoMessages = infoMessages
+
+		setTimeout(() => {
+			activeInfoMessage.isActive = false
+			infoMessages = infoMessages
+		}, 3000)
+	}
+
 	const handleKeyPress = (e: KeyboardEvent) => {
 		if (e.code === 'Enter') {
 			e.preventDefault()
@@ -201,16 +231,17 @@
 			return
 		}
 
-		if (inputText.includes(' ')) {
+		if (inputText.trim().includes(' ')) {
 			if (normalizeString(inputText) === normalizeString(article.personality)) {
 				const guessArray = inputText.split(' ')
 				for (const word of guessArray) {
 					revealWord(word)
 				}
 				inputText = ''
+				return
 			}
 
-			// [WIP] ajouter erreur/avertissement/explication
+			displayInfoMessage('noBlankInInput')
 			return
 		}
 
@@ -232,7 +263,12 @@
 	]
 	$: guessesPanelClasses = ['guesses', isGuessesPanelOpen ? '' : 'guesses_hidden']
 	$: userGuideClasses = ['info-block', 'user-guide', displayUserGuide ? '' : 'user-guide_hidden']
-	$: clueButtonClasses = ['clue-button', $clueCount === 0 ? 'clue-button_disabled' : '']
+	$: submitButtonClasses = ['button', 'button_submit', isArticleRevealed ? 'button_disabled' : '']
+	$: clueButtonClasses = [
+		'button',
+		'button_clue',
+		$clueCount === 0 || isArticleRevealed ? 'button_disabled' : '',
+	]
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -312,23 +348,32 @@
 
 	<!-- GUESS -->
 	<div bind:offsetHeight={guessesPanelHeight} class={guessesPanelClasses.join(' ')}>
+		<!-- INFO -->
+		<div class="info-message">
+			{#each infoMessages as message}
+				{@const infoMessageClasses = [
+					'info-message',
+					`info-message_${message.type}`,
+					message.isActive ? 'info-message_active' : '',
+				]}
+				<p class={infoMessageClasses.join(' ')}>{@html message.content}</p>
+			{/each}
+		</div>
+
 		<span class="guesses__toggle" on:click={toggleGuessesPanel}>
 			<ToggleIcon fillColor={'var(--lmui-c-smoke-medium)'} />
 		</span>
 
 		<div class="input__flex-container">
-			<div class="input__container">
-				<input
-					class="input"
-					placeholder="Devinez un mot"
-					type="text"
-					contenteditable="true"
-					bind:value={inputText}
-					on:keypress={handleKeyPress}
-				/>
-				<p class={clueButtonClasses.join(' ')} on:click={handleSubmit}>Valider</p>
-			</div>
-			<p class={clueButtonClasses.join(' ')} on:click={toggleClueMode}>Un&nbsp;indice&nbsp;?</p>
+			<input
+				class="input"
+				placeholder="Devinez un mot"
+				type="text"
+				contenteditable="true"
+				bind:value={inputText}
+				on:keypress={handleKeyPress}
+			/>
+			<p class={submitButtonClasses.join(' ')} on:click={handleSubmit}>Valider</p>
 		</div>
 
 		<ul class="history">
@@ -347,13 +392,13 @@
 		</ul>
 
 		<div class="bar">
-			<div class="bar__stats">
-				<p>{guesses.length} essai{guesses.length > 1 ? 's' : ''}</p>
-				<p>{$clueCount}/3 indices</p>
-			</div>
-			<div class="bar__quit">
-				<p on:click={finishGame}>Abandonner</p>
-			</div>
+			<p class={clueButtonClasses.join(' ')} on:click={toggleClueMode}>
+				<span>Révéler&nbsp;un&nbsp;mot</span> <span>{$clueCount}/3</span>
+			</p>
+			<p class="bar__stats">
+				{guesses.length}&nbsp;essai{guesses.length > 1 ? 's' : ''}
+			</p>
+			<p class="bar__quit" on:click={finishGame}>Abandonner</p>
 		</div>
 	</div>
 </div>
@@ -519,7 +564,7 @@
 		max-width: calc(var(--main-column-max-width) + 64px);
 		height: auto;
 		max-height: 50vh;
-		min-height: 20vh;
+		min-height: 25vh;
 		width: 100%;
 		background-color: var(--lmui-c-slate-darker);
 		box-shadow: 0px -6px 24px 0px rgba(0, 0, 0, 0.25);
@@ -543,7 +588,6 @@
 			display: flex;
 			align-items: center;
 			gap: 16px;
-			flex-wrap: wrap;
 		}
 
 		.input__container {
@@ -573,16 +617,14 @@
 			transition: 0.3s ease-in;
 		}
 
-		.clue-button {
-			margin-left: auto;
-			height: var(--input-height);
+		.button {
 			background-color: var(--lmui-c-snow-darker);
 			color: var(--lmui-c-slate-dark);
 			padding: 8px;
 			align-self: stretch;
 			display: flex;
 			align-items: center;
-			padding: 0 12px;
+			padding: 8px 12px;
 			border-radius: var(--lmui-c-rounded-search-radius);
 			font-weight: 500;
 			cursor: pointer;
@@ -592,7 +634,7 @@
 				background-color: var(--lmui-c-snow-light);
 			}
 
-			&.clue-button_disabled {
+			&.button_disabled {
 				cursor: default;
 				opacity: 0.2;
 			}
@@ -605,7 +647,7 @@
 			list-style: none;
 			overflow-y: scroll;
 			scrollbar-color: var(--lmui-c-slate-darker);
-			padding: 16px 0;
+			padding: 24px 0;
 
 			&::-webkit-scrollbar {
 				background-color: var(--lmui-c-slate-darker);
@@ -639,16 +681,31 @@
 
 		.bar {
 			margin-top: auto;
-			display: flex;
-			justify-content: space-between;
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			align-items: flex-end;
+			gap: 16px;
 			font-weight: 500;
+
+			.button_clue {
+				justify-self: flex-start;
+				width: min-content;
+				display: flex;
+				align-items: baseline;
+				gap: 8px;
+
+				> span:last-child {
+					font-weight: 200;
+					font-size: 0.8em;
+				}
+			}
 
 			&__stats {
 				font-family: var(--ff-marr-sans-condensed);
 				text-transform: uppercase;
 				letter-spacing: 0.08em;
-				display: flex;
-				gap: 16px;
+				font-size: 0.8em;
+				justify-self: center;
 			}
 
 			&__quit {
@@ -657,6 +714,7 @@
 				text-underline-offset: 0.3em;
 				cursor: pointer;
 				transition: color 200ms;
+				justify-self: flex-end;
 
 				&:hover {
 					color: var(--lmui-c-snow-darker);
@@ -675,6 +733,32 @@
 		}
 	}
 
+	.info-message {
+		position: relative;
+
+		p {
+			width: max-content;
+			position: absolute;
+			top: -76px;
+			transform: translateX(-50%) translateY(100%);
+			opacity: 0;
+			left: 50%;
+			max-width: 100vw;
+			background: var(--c-highlight-medium);
+			color: var(--lmui-c-white);
+			padding: 12px 24px;
+			border-radius: 24px;
+			font-weight: 500;
+			box-shadow: 0px 4px 18px 0px rgba(0, 0, 0, 0.15);
+			transition: opacity 400ms, transform 400ms;
+		}
+
+		&.info-message_active {
+			opacity: 1;
+			transform: translateX(-50%);
+		}
+	}
+
 	.container_ready {
 		.guesses {
 			opacity: 1;
@@ -684,7 +768,7 @@
 			opacity: 1;
 		}
 
-		/* WIP - clean et aligner sur clue-panel */
+		/* [WIP] clean et aligner sur clue-panel */
 		.user-guide {
 			opacity: 1;
 
