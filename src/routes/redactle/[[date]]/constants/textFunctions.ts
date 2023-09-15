@@ -37,9 +37,9 @@ export const findPunctuationInString = (string: string) => {
   return result
 }
 
-export const removeSpecialCharactersFromString = (string: string) => {
+export const removeSpecialCharactersFromString = (string: string, replaceWith?: string) => {
   const specialCharaRegex = new RegExp(specialCharaRegexString, 'g')
-  let cleanString = string.replaceAll(specialCharaRegex, '')
+  let cleanString = string.replaceAll(specialCharaRegex, replaceWith ?? '')
   return cleanString
 }
 

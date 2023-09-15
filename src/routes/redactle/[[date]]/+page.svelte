@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 
-	import type { Article, ArticleElement, ArticleNode } from '~/types'
+	import type { Article, ArticleElement, ArticleNode } from '~/routes/redactle/[[date]]/types'
 	import { clueMode, clueCount } from './store'
 
-	import { normalizeString } from './constants/textFunctions'
+	import { normalizeString, removeSpecialCharactersFromString } from './constants/textFunctions'
 	import { smallWords, getCloseWords } from './constants/dictionary'
 	import { prepareArticle, getWordsOccurencesInArticle } from './constants/articleFunctions'
 	import { getTextStyle } from './constants/textStyles'
@@ -18,12 +18,14 @@
 	const article: Article = data.article as Article
 	const articleData: ArticleNode[] = prepareArticle(article)
 
-	const answerArray: string[] = article.personality
-		? article.personality.split(' ').map((word) => normalizeString(word))
-		: []
+	// const cleanPersonality: string = removeSpecialCharactersFromString(article.personality, ' ')
+	// const answerArray: string[] = article.personality.split(' ').map((word) => normalizeString(word))
+	const answerArray: string[] = article.personality.split(' ')
 
-	// DEV
-	$: displayRevealedWords = false
+	console.log(answerArray)
+	console.log(
+		answerArray.flatMap((chunk) => removeSpecialCharactersFromString(chunk, ' ').split(' ')),
+	)
 
 	$: isArticleReady = false
 	$: isArticleRevealed = false
@@ -72,8 +74,19 @@
 		resetHighlight()
 	}
 
+	const isArrayRevealed = (array: string[]) => {
+		return array.every((word) => isWordRevealed(word) === true)
+	}
+
 	$: isArticleSolved = () => {
-		return answerArray.every((word) => revealedWords.includes(word))
+		if (isArrayRevealed(answerArray)) return true
+
+		const answerArrayWithoutSpecialChara = answerArray.flatMap((chunk) => {
+			return removeSpecialCharactersFromString(chunk, ' ').split(' ')
+		})
+		if (isArrayRevealed(answerArrayWithoutSpecialChara)) return true
+
+		return false
 	}
 
 	$: isWordInAnswer = (word: string) => {
@@ -192,10 +205,11 @@
 			}
 
 			if (inputText.includes(' ')) {
-				if (normalizeString(inputText) === normalizeString(article.personality as string)) {
-					const guessArray = normalizeString(inputText).split(' ')
-					revealWord(guessArray[0])
-					revealWord(guessArray[1])
+				if (normalizeString(inputText) === normalizeString(article.personality)) {
+					const guessArray = inputText.split(' ')
+					for (const word of guessArray) {
+						revealWord(word)
+					}
 					inputText = ''
 				}
 

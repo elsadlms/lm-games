@@ -1,4 +1,4 @@
-import type { Article, ArticleNode, ArticleElement } from '~/types'
+import type { Article, ArticleNode, ArticleElement } from '../types'
 
 import { punctuationSpaceRules } from './punctuation'
 import { findPunctuationInString, normalizeString } from './textFunctions'

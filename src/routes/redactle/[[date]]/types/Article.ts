@@ -1,10 +1,8 @@
 export interface Article {
   id: number
   url: string
-  publicationYear: number
-  publicationDate: string
+  personality: string
   nodes: ArticleRawNode[]
-  personality?: string
 }
 
 export type ArticleNodeType = 'title' | 'heading' | 'paragraph' | 'subtitle' | 'publication'
@@ -33,5 +31,6 @@ export interface ArticleElement {
   last: boolean
   type: 'word' | 'punctuation'
   content: string
-  spaceAfter: boolean | undefined
+  spaceAfter?: boolean
+  isRevealed?: boolean
 }

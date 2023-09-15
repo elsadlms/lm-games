@@ -1,4 +1,4 @@
-import type { ArticleNodeStyle } from '~/types'
+import type { ArticleNodeStyle } from '../types'
 
 const textStyles: ArticleNodeStyle[] = [
   {
