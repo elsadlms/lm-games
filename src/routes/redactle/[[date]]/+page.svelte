@@ -18,14 +18,7 @@
 	const article: Article = data.article as Article
 	const articleData: ArticleNode[] = prepareArticle(article)
 
-	// const cleanPersonality: string = removeSpecialCharactersFromString(article.personality, ' ')
-	// const answerArray: string[] = article.personality.split(' ').map((word) => normalizeString(word))
 	const answerArray: string[] = article.personality.split(' ')
-
-	console.log(answerArray)
-	console.log(
-		answerArray.flatMap((chunk) => removeSpecialCharactersFromString(chunk, ' ').split(' ')),
-	)
 
 	$: isArticleReady = false
 	$: isArticleRevealed = false
@@ -90,7 +83,7 @@
 	}
 
 	$: isWordInAnswer = (word: string) => {
-		return answerArray.includes(normalizeString(word))
+		return answerArray.map((word) => normalizeString(word)).includes(normalizeString(word))
 	}
 
 	$: canBeClue = ({ word, type }: { word: string; type: string }) => {
